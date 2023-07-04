@@ -1,0 +1,8 @@
+
+pyvenv.cfg
+bin/
+include/
+lib/python3.10
+.idea/
+
+**/**/__pycache__/

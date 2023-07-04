@@ -6,3 +6,4 @@ lib/python3.10
 .idea/
 
 **/**/__pycache__/
+*.db

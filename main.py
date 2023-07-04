@@ -1,7 +1,6 @@
-# This is a sample Python script.
+import sqlite3
 
-# Press Maj+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+print(f"sqlite version: {sqlite3.version}")
 
 
 def print_hi(name):

@@ -6,14 +6,17 @@ PRAGMA cache_size = 500000;
 
 CREATE TABLE categories (
 	id INTEGER NOT NULL,
-	name VARCHAR(200) NOT NULL,
+	name VARCHAR(200) NOT NULL default(';'),
 	parent_category_id INTEGER NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY(parent_category_id) REFERENCES categories(id),
 	UNIQUE (name)
-);
+);  -- yolo
 
-ALTER TABLE categories ADD COLUMN description VARCHAR(200) DEFAULT '';
+asdf
+
 
 CREATE INDEX myindex_test ON categories (name);
 DROP INDEX myindex_test;
+
+ALTER TABLE categories ADD COLUMN description VARCHAR(200) DEFAULT '';

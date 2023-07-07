@@ -12,10 +12,13 @@ def parse(str_content):
         "indexes": {}
     }
 
-    pattern = re.compile(r'(?i)(CREATE TABLE|ALTER TABLE|PRAGMA).*?;', re.DOTALL)
+    pattern = re.compile(r'(?i)((CREATE TABLE|ALTER TABLE|PRAGMA).*?;)\s*(--[^\n]*)?\n', re.DOTALL | re.MULTILINE)
 
-    for match in pattern.finditer(str_content):
+    for match in pattern.finditer(f"{str_content}\n"):
+        line = match.group(1)
+        base_instruction = match.group(2).upper()
         print('current match:')
-        print(match.group())
+        print(f"line = =={line}==")
+        print(f"base_instruction = =={base_instruction}==")
 
     return result

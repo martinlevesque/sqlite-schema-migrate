@@ -8,3 +8,5 @@ if __name__ == '__main__':
 
     result = schema_parser.parse(stdin_content)
 
+    print(result)
+

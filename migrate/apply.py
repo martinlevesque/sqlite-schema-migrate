@@ -13,10 +13,8 @@ def apply(local_schema=None, remote_schema=None, database=None):
         desired_value = pragma.value()
 
         # get remote db value:
-        result = database.first_column(f"PRAGMA {pragma_name};")
-        print(f"remote value = {result}")
-        result = database.first_column(f"PRAGMA tititoto;")
-        print(f"invalid -> {result}")
+        current_value = database.first_column(f"PRAGMA {pragma_name};")
+        print(f"remote value = {current_value}")
 
     print(f"will apply!")
 

@@ -11,10 +11,7 @@ CREATE TABLE categories (
 	PRIMARY KEY (id),
 	FOREIGN KEY(parent_category_id) REFERENCES categories(id),
 	UNIQUE (name)
-);  -- yolo
-
-asdf
-
+);
 
 CREATE INDEX myindex_test ON categories (name);
 DROP INDEX myindex_test;

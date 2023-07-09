@@ -24,8 +24,11 @@ class Database:
 
         return row[0]
 
-    def execute(self, query):
-        return self.conn.execute(query)
+    def execute(self, query, args):
+        return self.conn.execute(query, args)
+
+    def commit(self):
+        return self.conn.commit()
 
     def table_exists(self, table_name):
         return self.first_column(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';") is not None

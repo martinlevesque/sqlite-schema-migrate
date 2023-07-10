@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from typing import Optional
 from schema.statement_schema import StatementSchema
 
 
@@ -10,6 +11,7 @@ from schema.statement_schema import StatementSchema
 class PragmaSchema(StatementSchema):
     statement: str
     base_instruction: str
+    force_value: Optional[str] = None
 
     REGEX = r'PRAGMA\s+(\w+)\s*=\s*(\w+);'
     TYPE = 'pragma'
@@ -18,4 +20,12 @@ class PragmaSchema(StatementSchema):
         return self.parse().group(1)
 
     def value(self):
-        return self.parse().group(2)
+        if self.force_value is not None:
+            return self.force_value
+
+        self.force_value = self.parse().group(2)
+
+        return self.force_value
+
+    def __str__(self):
+        return f"PRAGMA {self.variable_name()} = {self.value()};"

@@ -1,5 +1,6 @@
 import re
 from schema.pragma_schema import PragmaSchema
+from schema.parsed_schema import ParsedSchema
 
 # read an input sql schema content and provide a hash representing the schema
 
@@ -12,13 +13,11 @@ STATEMENT_TYPES = {
 
 
 def parse(str_content):
-    result = {
-        "pragmas": {},
-        "tables": {},
-        # "views": {},
-        # "triggers": {},
-        "indexes": {}
-    }
+    result = ParsedSchema(
+        pragmas={},
+        tables={},
+        indexes={}
+    )
 
     pattern = re.compile(r'(?i)((CREATE TABLE|ALTER TABLE|PRAGMA).*?;)\s*(--[^\n]*)?\n', re.DOTALL | re.MULTILINE)
 
@@ -35,6 +34,6 @@ def parse(str_content):
             schema_item = statement_setup['class'](statement=statement, base_instruction=base_instruction)
 
             if schema_item.TYPE == 'pragma':
-                result['pragmas'][schema_item.variable_name()] = schema_item
+                result.pragmas[schema_item.variable_name()] = schema_item
 
     return result

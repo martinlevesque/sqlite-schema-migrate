@@ -1,4 +1,3 @@
-
 import sqlite3
 from dataclasses import dataclass
 
@@ -24,14 +23,21 @@ class Database:
 
         return row[0]
 
-    def execute(self, query, args):
+    def execute(self, query, args=None, log_function=None):
+        if log_function:
+            log_function(f"Executing: {query} with args: {args}")
+
+        if args is None:
+            return self.conn.execute(query)
+
         return self.conn.execute(query, args)
 
     def commit(self):
         return self.conn.commit()
 
     def table_exists(self, table_name):
-        return self.first_column(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';") is not None
+        return self.first_column(
+            f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';") is not None
 
     def close(self):
         self.conn.close()

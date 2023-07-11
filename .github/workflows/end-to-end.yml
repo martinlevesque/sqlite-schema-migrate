@@ -1,0 +1,27 @@
+name: end-to-end
+
+on: [push]
+
+jobs:
+  end-to-end:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+      - name: Test with categories schema
+        run: |
+          rm -f test.db
+          cat tests/fixtures/schema-samples/categories.sql | python main.py test.db
+          sqlite3 -line test.db 'PRAGMA default_cache_size;' | grep "cache_size = 500000"

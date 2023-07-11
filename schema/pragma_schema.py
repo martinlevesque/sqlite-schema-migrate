@@ -11,7 +11,7 @@ from schema.statement_schema import StatementSchema
 class PragmaSchema(StatementSchema):
     statement: str
     base_instruction: str
-    force_value: Optional[str] = None
+    override_value: Optional[str] = None
 
     REGEX = r'PRAGMA\s+(\w+)\s*=\s*(\w+);'
     TYPE = 'pragma'
@@ -20,12 +20,12 @@ class PragmaSchema(StatementSchema):
         return self.parse().group(1)
 
     def value(self):
-        if self.force_value is not None:
-            return self.force_value
+        if self.override_value is not None:
+            return self.override_value
 
-        self.force_value = self.parse().group(2)
+        self.override_value = self.parse().group(2)
 
-        return self.force_value
+        return self.override_value
 
     def __str__(self):
         return f"PRAGMA {self.variable_name()} = {self.value()};"

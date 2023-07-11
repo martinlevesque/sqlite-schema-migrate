@@ -20,9 +20,8 @@ def apply(local_schema=None, previous_schema=None, database=None):
 
         if current_value != desired_value:
             database.execute(f"PRAGMA {pragma_name} = {desired_value};", log_function=log.info)
-            database.commit()
 
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")
-            applied_schema.pragmas[pragma_name].force_value = mutated_value
+            applied_schema.pragmas[pragma_name].override_value = mutated_value
 
     return applied_schema

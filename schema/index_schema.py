@@ -1,13 +1,20 @@
+
+import re
 from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
 
+# doc:
+# https://www.sqlite.org/lang_createindex.html
 
 # example:
-# PRAGMA journal_mode = MEMORY;
+# CREATE [UNIQUE] INDEX [IF NOT EXISTS] [schema_name.]index_name ON table_name (column_name [, ...]) [WHERE expr];
+
+# todo
+# if find drop index, remove it from the schema
 
 @dataclass
-class PragmaSchema(StatementSchema):
+class IndexSchema(StatementSchema):
     statement: str
     base_instruction: str
     override_value: Optional[str] = None

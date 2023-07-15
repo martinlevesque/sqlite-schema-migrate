@@ -16,7 +16,7 @@ class PragmaSchema(StatementSchema):
     TYPE = 'pragma'
 
     def variable_name(self):
-        return self.parse().group(1)
+        return str(self.parse().group(1)).lower()
 
     def value(self):
         if self.override_value is not None:

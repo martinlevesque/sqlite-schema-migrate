@@ -8,7 +8,7 @@ class StatementSchema():
     base_instruction: str
 
     def parse(self):
-        match = re.search(self.__class__.REGEX, self.statement)
+        match = re.search(self.__class__.REGEX, self.statement, re.IGNORECASE)
 
         if not match:
             raise Exception(f"Invalid statement: {self.statement}")

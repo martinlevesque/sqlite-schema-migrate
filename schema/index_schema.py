@@ -19,11 +19,23 @@ class IndexSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r'CREATE\s+(UNIQUE)?\s+(\w+)\s*=\s*(\w+);'
+    REGEX = r'CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\);'
     TYPE = 'pragma'
 
-    def variable_name(self):
-        return self.parse().group(1)
+    def index_name(self):
+        return self.parse().group(4)
+
+    def table_name(self):
+        return self.parse().group(5)
+
+    def is_unique(self):
+        return str(self.parse().group(1)).upper() == 'UNIQUE'
+
+    def columns(self):
+        columns_str = str(self.parse().group(6)).split(',')
+
+        return [column.strip() for column in columns_str if column.strip()]
+
 
     def value(self):
         if self.override_value is not None:

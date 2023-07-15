@@ -20,7 +20,7 @@ class IndexSchema(StatementSchema):
     override_value: Optional[str] = None
 
     REGEX = r'CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\);'
-    TYPE = 'pragma'
+    TYPE = 'create_index'
 
     def index_name(self):
         return self.parse().group(4)

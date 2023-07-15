@@ -1,8 +1,8 @@
-
 import re
 from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
+
 
 # doc:
 # https://www.sqlite.org/lang_createindex.html
@@ -19,7 +19,7 @@ class IndexSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r'PRAGMA\s+(\w+)\s*=\s*(\w+);'
+    REGEX = r'CREATE\s+(UNIQUE)?\s+(\w+)\s*=\s*(\w+);'
     TYPE = 'pragma'
 
     def variable_name(self):

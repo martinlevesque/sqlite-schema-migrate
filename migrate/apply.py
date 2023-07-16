@@ -1,4 +1,3 @@
-
 from copy import deepcopy
 from lib import log
 
@@ -19,7 +18,9 @@ def apply(local_schema=None, previous_schema=None, database=None):
         current_value = previous_schema.pragmas.get(pragma_name, None)
 
         if current_value != desired_value:
-            database.execute(f"PRAGMA {pragma_name} = {desired_value};", log_function=log.info)
+            database.execute(
+                f"PRAGMA {pragma_name} = {desired_value};", log_function=log.info
+            )
 
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")
             applied_schema.pragmas[pragma_name].override_value = mutated_value

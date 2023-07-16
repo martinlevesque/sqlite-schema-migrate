@@ -6,14 +6,15 @@ from schema.statement_schema import StatementSchema
 # example:
 # PRAGMA journal_mode = MEMORY;
 
+
 @dataclass
 class PragmaSchema(StatementSchema):
     statement: str
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r'PRAGMA\s+(\w+)\s*=\s*(\w+);'
-    TYPE = 'pragma'
+    REGEX = r"PRAGMA\s+(\w+)\s*=\s*(\w+);"
+    TYPE = "pragma"
 
     def variable_name(self):
         return str(self.parse().group(1)).lower()

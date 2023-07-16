@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 # communicate with the sqlite database
 
+
 @dataclass
 class Database:
     filepath: str
@@ -36,8 +37,12 @@ class Database:
         return self.conn.commit()
 
     def table_exists(self, table_name):
-        return self.first_column(
-            f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';") is not None
+        return (
+            self.first_column(
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
+            )
+            is not None
+        )
 
     def close(self):
         self.conn.close()

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class StatementSchema():
+class StatementSchema:
     statement: str
     base_instruction: str
 

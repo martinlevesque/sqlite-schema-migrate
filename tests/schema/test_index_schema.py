@@ -71,4 +71,17 @@ def test_index_schema_with_where_clause():
         base_instruction="CREATE INDEX",
     )
 
-    assert index.where_clause() == "WHERE col1 = 'test' and col2 = 'test2'"
+    assert index.where_clause() == "col1 = 'test' and col2 = 'test2'"
+
+
+def test_index_schema_str():
+    index = IndexSchema(
+        statement="""CREATE INDEX schema.index_name ON table_name (column_name1)
+                        WHERE col1 = 'test' and col2 = 'test2';""",
+        base_instruction="CREATE INDEX",
+    )
+
+    assert (
+        str(index)
+        == "CREATE INDEX schema.index_name ON table_name (column_name1) WHERE col1 = 'test' and col2 = 'test2';"
+    )

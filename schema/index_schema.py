@@ -20,7 +20,7 @@ class IndexSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r"CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\)\s*(WHERE\s+.*)?;"
+    REGEX = r"CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\)\s*(WHERE\s+(.*))?;"
     TYPE = "create_index"
 
     def schema_name(self):
@@ -46,6 +46,9 @@ class IndexSchema(StatementSchema):
 
         return self.index_name()
 
+    def name(self):
+        return self.index_full_name()
+
     def table_name(self):
         return self.parse().group(5)
 
@@ -58,7 +61,7 @@ class IndexSchema(StatementSchema):
         return [column.strip() for column in columns_str if column.strip()]
 
     def where_clause(self):
-        return self.parse().group(9)
+        return self.parse().group(10)
 
     def value(self):
         if self.override_value is not None:
@@ -69,4 +72,18 @@ class IndexSchema(StatementSchema):
         return self.override_value
 
     def __str__(self):
-        return f"PRAGMA {self.variable_name()} = {self.value()};"
+        result = "CREATE "
+
+        if self.is_unique():
+            result += "UNIQUE "
+
+        result += "INDEX "
+
+        result += self.index_full_name()
+
+        result += f" ON {self.table_name()} ({', '.join(self.columns())})"
+
+        if self.where_clause():
+            result += f" WHERE {self.where_clause()}"
+
+        return f"{result};"

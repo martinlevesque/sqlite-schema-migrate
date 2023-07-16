@@ -7,6 +7,9 @@ class StatementSchema:
     statement: str
     base_instruction: str
 
+    def name(self):
+        raise Exception("Not implemented")
+
     def parse(self):
         match = re.search(self.__class__.REGEX, self.statement, re.IGNORECASE)
 

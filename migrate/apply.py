@@ -25,7 +25,10 @@ def apply(local_schema=None, previous_schema=None, database=None):
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")
             applied_schema.pragmas[pragma_name].override_value = mutated_value
 
-            # indexes:
-            # todo: if index no more there, drop it
+    # indexes
+    for index_name, index in local_schema.indexes.items():
+        print(f"index_name: {index_name}")
+        print(f"index: {index}")
+
 
     return applied_schema

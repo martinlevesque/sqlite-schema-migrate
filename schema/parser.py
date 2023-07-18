@@ -37,6 +37,6 @@ def parse(str_content):
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":
-                result.pragmas[schema_item.name()] = schema_item
+                result.indexes[schema_item.name()] = schema_item
 
     return result

@@ -20,7 +20,7 @@ def apply(local_schema=None, previous_schema=None, database=None):
 
         if current_value != desired_value:
 
-            pragma_schema.override_value = mutated_value
+            pragma_schema.override_value = desired_value
             database.execute(str(pragma_schema), log_function=log.info)
 
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")

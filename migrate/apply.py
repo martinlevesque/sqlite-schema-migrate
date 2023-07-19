@@ -11,6 +11,7 @@ def apply(local_schema=None, previous_schema=None, database=None):
 
     # pragmas
     for pragma_name, pragma in local_schema.pragmas.items():
+        pragma_schema = applied_schema.pragmas[pragma_name]
 
         desired_value = pragma.value()
 
@@ -18,12 +19,12 @@ def apply(local_schema=None, previous_schema=None, database=None):
         current_value = previous_schema.pragmas.get(pragma_name, None)
 
         if current_value != desired_value:
-            database.execute(
-                f"PRAGMA {pragma_name} = {desired_value};", log_function=log.info
-            )
+
+            pragma_schema.override_value = mutated_value
+            database.execute(str(pragma_schema), log_function=log.info)
 
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")
-            applied_schema.pragmas[pragma_name].override_value = mutated_value
+            pragma_schema.override_value = mutated_value
 
     # indexes
     for index_name, index in local_schema.indexes.items():

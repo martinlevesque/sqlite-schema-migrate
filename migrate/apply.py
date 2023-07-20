@@ -9,6 +9,8 @@ from lib import log
 def apply(local_schema=None, previous_schema=None, database=None):
     applied_schema = deepcopy(local_schema)
 
+    # todo refactor
+
     # pragmas
     for pragma_name, pragma in local_schema.pragmas.items():
         pragma_schema = applied_schema.pragmas[pragma_name]
@@ -16,10 +18,9 @@ def apply(local_schema=None, previous_schema=None, database=None):
         desired_value = pragma.value()
 
         # get remote db value:
-        current_value = previous_schema.pragmas.get(pragma_name, None)
+        current_schema = previous_schema.pragmas.get(pragma_name, None)
 
-        if current_value != desired_value:
-
+        if current_schema is None or current_schema.value() != desired_value:
             pragma_schema.override_value = desired_value
             database.execute(str(pragma_schema), log_function=log.info)
 
@@ -27,9 +28,13 @@ def apply(local_schema=None, previous_schema=None, database=None):
             pragma_schema.override_value = mutated_value
 
     # indexes
-    for index_name, index in local_schema.indexes.items():
-        print(f"index_name: {index_name}")
-        print(f"index: {index}")
+    for index_name, index_schema in local_schema.indexes.items():
+        index_schema = applied_schema.indexes[index_name]
+        current_value = previous_schema.pragmas.get(pragma_name, None)
 
+        previous_index_schema = previous_schema.indexes.get(index_name, None)
+
+        print(f"current index schema: {index_schema}")
+        print(f"previous index schema: {previous_index_schema}")
 
     return applied_schema

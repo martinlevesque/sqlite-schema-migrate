@@ -10,7 +10,7 @@ class ParsedSchema:
     def __str__(self):
         result = ""
 
-        for pragma in self.pragmas.values():
-            result += f"{pragma}\n"
+        for entity in list(self.pragmas.values()) + list(self.indexes.values()):
+            result += f"{entity}\n"
 
         return result

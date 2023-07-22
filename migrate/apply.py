@@ -30,6 +30,17 @@ def apply(local_schema=None, previous_schema=None, database=None):
             mutated_value = database.first_column(f"PRAGMA {pragma_name};")
             pragma_schema.override_value = mutated_value
 
+    # tables
+    for table_name, table_schema in local_schema.tables.items():
+        table_schema = applied_schema.tables[table_name]
+
+        previous_table_schema = previous_schema.tables.get(table_name, None)
+
+        if previous_table_schema is None:
+            database.execute(str(table_schema), log_function=log.info)
+        else:
+            log.debug(f"table {table_name} already exists...")
+
     # indexes
     for index_name, index_schema in local_schema.indexes.items():
         index_schema = applied_schema.indexes[index_name]

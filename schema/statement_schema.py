@@ -10,8 +10,13 @@ class StatementSchema:
     def name(self):
         raise Exception("Not implemented")
 
+    def prepared_input_statement(self):
+        return self.statement
+
     def parse(self):
-        match = re.search(self.__class__.REGEX, self.statement, re.IGNORECASE)
+        match = re.search(
+            self.__class__.REGEX, self.prepared_input_statement(), re.IGNORECASE
+        )
 
         if not match:
             raise Exception(f"Invalid statement: {self.statement}")

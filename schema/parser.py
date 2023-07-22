@@ -2,6 +2,7 @@ import re
 from schema.parsed_schema import ParsedSchema
 from schema.pragma_schema import PragmaSchema
 from schema.index_schema import IndexSchema
+from schema.table_schema import TableSchema
 
 # read an input sql schema content and provide a hash representing the schema
 
@@ -9,6 +10,7 @@ STATEMENT_TYPES = {
     "PRAGMA": {"name": "pragma", "class": PragmaSchema},
     "CREATE INDEX": {"name": "index", "class": IndexSchema},
     "CREATE UNIQUE INDEX": {"name": "index", "class": IndexSchema},
+    "CREATE TABLE": {"name": "table", "class": TableSchema},
 }
 
 
@@ -37,8 +39,9 @@ def parse(str_content):
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":
-
                 result.indexes[schema_item.name()] = schema_item
+            elif schema_item.TYPE == "create_table":
+                result.tables[schema_item.name()] = schema_item
             else:
                 raise Exception(f"Unknown schema item type: {schema_item.TYPE}")
 

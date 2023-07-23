@@ -1,40 +1,29 @@
 from copy import deepcopy
 from lib import log
 
+
 # given the local schema, and remote schema, apply the diffs from the local schema to the remote schema
 
 # Path: migrate/apply.py
 
 
-def apply(local_schema=None, previous_schema=None, database=None):
-    applied_schema = deepcopy(local_schema)
+def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
+    applied_schema = deepcopy(local_parsed_schema)
+
+    apply_items(
+        current_parsed_schema=applied_schema,
+        previous_parsed_schema=previous_parsed_schema,
+        attribute_name_items="pragmas",
+        database=database,
+    )
 
     # todo refactor
 
-    # pragmas
-    for pragma_name, pragma in local_schema.pragmas.items():
-        pragma_schema = applied_schema.pragmas[pragma_name]
-
-        desired_value = pragma_schema.value()
-
-        # get remote db value:
-        previous_pragma_schema = previous_schema.pragmas.get(pragma_name, None)
-
-        if (
-            previous_pragma_schema is None
-            or previous_pragma_schema.value() != desired_value
-        ):
-            pragma_schema.override_value = desired_value
-            database.execute(str(pragma_schema), log_function=log.info)
-
-            mutated_value = database.first_column(f"PRAGMA {pragma_name};")
-            pragma_schema.override_value = mutated_value
-
     # tables
-    for table_name, table_schema in local_schema.tables.items():
+    for table_name, table_schema in local_parsed_schema.tables.items():
         table_schema = applied_schema.tables[table_name]
 
-        previous_table_schema = previous_schema.tables.get(table_name, None)
+        previous_table_schema = previous_parsed_schema.tables.get(table_name, None)
 
         if previous_table_schema is None:
             database.execute(str(table_schema), log_function=log.info)
@@ -42,10 +31,10 @@ def apply(local_schema=None, previous_schema=None, database=None):
             log.debug(f"table {table_name} already exists...")
 
     # indexes
-    for index_name, index_schema in local_schema.indexes.items():
+    for index_name, index_schema in local_parsed_schema.indexes.items():
         index_schema = applied_schema.indexes[index_name]
 
-        previous_index_schema = previous_schema.indexes.get(index_name, None)
+        previous_index_schema = previous_parsed_schema.indexes.get(index_name, None)
 
         if previous_index_schema is None:
             database.execute(str(index_schema), log_function=log.info)
@@ -53,3 +42,14 @@ def apply(local_schema=None, previous_schema=None, database=None):
             log.debug(f"index {index_name} already exists...")
 
     return applied_schema
+
+
+def apply_items(current_parsed_schema=None, previous_parsed_schema=None, attribute_name_items=None, database=None):
+    current_schema_items = getattr(current_parsed_schema, attribute_name_items)
+
+    for name, item in current_schema_items.items():
+        given_current_schema = getattr(current_parsed_schema, attribute_name_items).get(name, None)
+        given_previous_schema = getattr(previous_parsed_schema, attribute_name_items).get(name, None)
+
+        given_current_schema.apply_changes(previous_schema=given_previous_schema, database=database)
+

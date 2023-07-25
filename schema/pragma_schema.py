@@ -35,10 +35,7 @@ class PragmaSchema(StatementSchema):
         current_schema = self
         desired_value = current_schema.value()
 
-        if (
-                previous_schema is None
-                or previous_schema.value() != desired_value
-        ):
+        if previous_schema is None or previous_schema.value() != desired_value:
             current_schema.override_value = desired_value
             database.execute(str(current_schema), log_function=log.info)
 

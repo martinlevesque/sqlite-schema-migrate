@@ -10,6 +10,7 @@ from lib import log
 def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
     applied_schema = deepcopy(local_parsed_schema)
 
+    # pragmas
     apply_items(
         current_parsed_schema=applied_schema,
         previous_parsed_schema=previous_parsed_schema,
@@ -31,25 +32,30 @@ def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
             log.debug(f"table {table_name} already exists...")
 
     # indexes
-    for index_name, index_schema in local_parsed_schema.indexes.items():
-        index_schema = applied_schema.indexes[index_name]
-
-        previous_index_schema = previous_parsed_schema.indexes.get(index_name, None)
-
-        if previous_index_schema is None:
-            database.execute(str(index_schema), log_function=log.info)
-        else:
-            log.debug(f"index {index_name} already exists...")
-
-    return applied_schema
+    apply_items(
+        current_parsed_schema=applied_schema,
+        previous_parsed_schema=previous_parsed_schema,
+        attribute_name_items="indexes",
+        database=database,
+    )
 
 
-def apply_items(current_parsed_schema=None, previous_parsed_schema=None, attribute_name_items=None, database=None):
+def apply_items(
+    current_parsed_schema=None,
+    previous_parsed_schema=None,
+    attribute_name_items=None,
+    database=None,
+):
     current_schema_items = getattr(current_parsed_schema, attribute_name_items)
 
     for name, item in current_schema_items.items():
-        given_current_schema = getattr(current_parsed_schema, attribute_name_items).get(name, None)
-        given_previous_schema = getattr(previous_parsed_schema, attribute_name_items).get(name, None)
+        given_current_schema = getattr(current_parsed_schema, attribute_name_items).get(
+            name, None
+        )
+        given_previous_schema = getattr(previous_parsed_schema, attribute_name_items).get(
+            name, None
+        )
 
-        given_current_schema.apply_changes(previous_schema=given_previous_schema, database=database)
-
+        given_current_schema.apply_changes(
+            previous_schema=given_previous_schema, database=database
+        )

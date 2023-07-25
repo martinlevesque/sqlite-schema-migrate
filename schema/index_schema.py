@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
+from lib import log
 
 
 # doc:
@@ -70,6 +71,12 @@ class IndexSchema(StatementSchema):
         self.override_value = self.parse().group(2)
 
         return self.override_value
+
+    def apply_changes(self, previous_schema=None, database=None):
+        if previous_schema is None:
+            database.execute(str(self), log_function=log.info)
+        else:
+            log.debug(f"index {self.index_full_name()} already exists...")
 
     def __str__(self):
         result = "CREATE "

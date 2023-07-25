@@ -10,7 +10,11 @@ class ParsedSchema:
     def __str__(self):
         result = ""
 
-        db_entities = list(self.pragmas.values()) + list(self.tables.values()) + list(self.indexes.values())
+        db_entities = (
+            list(self.pragmas.values())
+            + list(self.tables.values())
+            + list(self.indexes.values())
+        )
 
         for entity in db_entities:
             result += f"{entity}\n"

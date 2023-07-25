@@ -16,7 +16,9 @@ if __name__ == "__main__":
     previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
 
     new_schema = migrate_apply.apply(
-        local_parsed_schema=desired_schema, previous_parsed_schema=previous_schema, database=db
+        local_parsed_schema=desired_schema,
+        previous_parsed_schema=previous_schema,
+        database=db,
     )
 
     # insert the schema into the database

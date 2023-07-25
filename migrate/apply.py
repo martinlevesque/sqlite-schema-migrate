@@ -10,34 +10,15 @@ from lib import log
 def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
     applied_schema = deepcopy(local_parsed_schema)
 
-    # pragmas
-    apply_items(
-        current_parsed_schema=applied_schema,
-        previous_parsed_schema=previous_parsed_schema,
-        attribute_name_items="pragmas",
-        database=database,
-    )
+    items_to_apply = ["pragmas", "tables", "indexes"]
 
-    # todo refactor
-
-    # tables
-    for table_name, table_schema in local_parsed_schema.tables.items():
-        table_schema = applied_schema.tables[table_name]
-
-        previous_table_schema = previous_parsed_schema.tables.get(table_name, None)
-
-        if previous_table_schema is None:
-            database.execute(str(table_schema), log_function=log.info)
-        else:
-            log.debug(f"table {table_name} already exists...")
-
-    # indexes
-    apply_items(
-        current_parsed_schema=applied_schema,
-        previous_parsed_schema=previous_parsed_schema,
-        attribute_name_items="indexes",
-        database=database,
-    )
+    for item_name in items_to_apply:
+        apply_items(
+            current_parsed_schema=applied_schema,
+            previous_parsed_schema=previous_parsed_schema,
+            attribute_name_items=item_name,
+            database=database,
+        )
 
 
 def apply_items(

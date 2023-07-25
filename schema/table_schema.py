@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
-from typing import Optional
 from schema.statement_schema import StatementSchema
+from lib import log
 
 
 # doc:
@@ -48,6 +48,12 @@ class TableSchema(StatementSchema):
 
     def name(self):
         return self.table_full_name()
+
+    def apply_changes(self, previous_schema=None, database=None):
+        if previous_schema is None:
+            database.execute(str(self), log_function=log.info)
+        else:
+            log.debug(f"table {self.name()} already exists...")
 
     def __str__(self):
         return self.prepared_input_statement()

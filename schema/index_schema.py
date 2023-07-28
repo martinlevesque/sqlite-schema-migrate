@@ -72,11 +72,21 @@ class IndexSchema(StatementSchema):
 
         return self.override_value
 
-    def apply_changes(self, previous_schema=None, database=None):
-        if previous_schema is None:
-            database.execute(str(self), log_function=log.info)
-        else:
-            log.debug(f"index {self.index_full_name()} already exists...")
+    @staticmethod
+    def apply_changes(current_schema=None, previous_schema=None, database=None):
+        # TODO: add test each scenario
+
+        if previous_schema is None and current_schema:
+            # it is new:
+            database.execute(str(current_schema), log_function=log.info)
+        elif current_schema is None and previous_schema:
+            # it was removed:
+            database.execute(previous_schema.destroy_cmd(), log_function=log.info)
+        elif current_schema:
+            log.debug(f"index {current_schema.index_full_name()} already exists...")
+
+    def destroy_cmd(self):
+        return f"DROP INDEX {self.index_full_name()};"
 
     def __str__(self):
         result = "CREATE "

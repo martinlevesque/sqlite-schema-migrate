@@ -14,7 +14,7 @@ CREATE TABLE categories (
 	UNIQUE (name)
 );
 
-CREATE INDEX myindex_test2 ON categories (name);
--- DROP INDEX myindex_test;
+DROP INDEX IF EXISTS myindex_test;
+CREATE INDEX myindex_test ON categories (name);
 
 ALTER TABLE categories ADD COLUMN description VARCHAR(200) DEFAULT '';

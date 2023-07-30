@@ -52,6 +52,7 @@ class TableSchema(StatementSchema):
     @staticmethod
     def apply_changes(current_schema=None, previous_schema=None, database=None):
         if previous_schema is None:
+            # does not exist, create it
             database.execute(str(current_schema), log_function=log.info)
         else:
             log.debug(f"table {current_schema.name()} already exists...")

@@ -6,17 +6,13 @@ class ParsedSchema:
     pragmas: dict
     tables: dict
     indexes: dict
+    drop_entities: dict
+    all: list
 
     def __str__(self):
         result = ""
 
-        db_entities = (
-            list(self.pragmas.values())
-            + list(self.tables.values())
-            + list(self.indexes.values())
-        )
-
-        for entity in db_entities:
+        for entity in self.all:
             result += f"{entity}\n"
 
         return result

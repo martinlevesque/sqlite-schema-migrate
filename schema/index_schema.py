@@ -11,9 +11,6 @@ from lib import log
 # example:
 # CREATE [UNIQUE] INDEX [IF NOT EXISTS] [schema_name.]index_name ON table_name (column_name [, ...]) [WHERE expr];
 
-# todo
-# if find drop index, remove it from the schema
-
 
 @dataclass
 class IndexSchema(StatementSchema):

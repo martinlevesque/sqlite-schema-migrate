@@ -7,13 +7,12 @@ from lib import log
 # Path: migrate/apply.py
 
 
-# TODO: add test to apply
-
-
 def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
     applied_schema = deepcopy(local_parsed_schema)
 
-    items_to_apply = ["pragmas", "tables", "indexes"]
+    # TODO refactor to use *all*
+
+    items_to_apply = ["pragmas", "tables", "indexes", "drop_entities"]
 
     for item_name in items_to_apply:
         apply_items(

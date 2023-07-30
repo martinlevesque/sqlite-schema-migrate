@@ -9,6 +9,7 @@ from lib import log
 
 # TODO: add test to apply
 
+
 def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
     applied_schema = deepcopy(local_parsed_schema)
 
@@ -54,5 +55,7 @@ def apply_items(
 
         any_schema = given_current_schema or given_previous_schema
         any_schema.apply_changes(
-            current_schema=given_current_schema, previous_schema=given_previous_schema, database=database
+            current_schema=given_current_schema,
+            previous_schema=given_previous_schema,
+            database=database,
         )

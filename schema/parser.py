@@ -32,7 +32,6 @@ def parse(str_content):
 
         if statement_setup is None:
             # raise Exception(f"Unknown statement type: {base_instruction}")
-            print(f"hereee!!! {base_instruction}")
             continue
         else:
             schema_item = statement_setup["class"](

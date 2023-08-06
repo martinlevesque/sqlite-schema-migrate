@@ -18,6 +18,9 @@ class DropEntitySchema(StatementSchema):
     REGEX = r"DROP\s+(TABLE|INDEX)?\s*(IF EXISTS)?\s*(\w+\.)?(\w+);"
     TYPE = "drop_entity"
 
+    def id(self):
+        return f"drop-{self.entity_type()}-{self.name()}"
+
     def schema_name(self):
         schema_txt = self.parse().group(3)
 

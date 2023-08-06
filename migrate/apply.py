@@ -8,28 +8,49 @@ from lib import log
 
 
 def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
-    applied_schema = deepcopy(local_parsed_schema)
+    applied_schema = deepcopy(local_parsed_schema.all)
 
-    # TODO refactor to use *all*
+    for previous_item in previous_parsed_schema.all:
+        if not any(other_item.id() == previous_item.id() for other_item in applied_schema):
+            applied_schema.append(previous_item)
 
-    items_to_apply = ["pragmas", "tables", "indexes", "drop_entities"]
+    for item in applied_schema:
+        current = first_item([x for x in local_parsed_schema.all if x.id() == item.id()])
+        previous = first_item([x for x in previous_parsed_schema.all if x.id() == item.id()])
 
-    for item_name in items_to_apply:
-        apply_items(
-            current_parsed_schema=applied_schema,
-            previous_parsed_schema=previous_parsed_schema,
-            attribute_name_items=item_name,
-            database=database,
+        any_schema = current or previous
+
+        any_schema.apply_changes(
+            current_schema=current,
+            previous_schema=previous,
+            database=database
         )
+
+
+def first_item(items):
+    if len(items) > 0:
+        return items[0]
+
+    return None
+
+    # items_to_apply = ["pragmas", "tables", "indexes", "drop_entities"]
+
+    # for item_name in items_to_apply:
+    #    apply_items(
+    #        current_parsed_schema=applied_schema,
+    #        previous_parsed_schema=previous_parsed_schema,
+    #        attribute_name_items=item_name,
+    #        database=database,
+    #    )
 
     return applied_schema
 
 
 def apply_items(
-    current_parsed_schema=None,
-    previous_parsed_schema=None,
-    attribute_name_items=None,
-    database=None,
+        current_parsed_schema=None,
+        previous_parsed_schema=None,
+        attribute_name_items=None,
+        database=None,
 ):
     current_schema_items = getattr(current_parsed_schema, attribute_name_items)
 

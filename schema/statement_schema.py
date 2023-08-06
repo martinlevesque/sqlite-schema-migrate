@@ -7,6 +7,15 @@ class StatementSchema:
     statement: str
     base_instruction: str
 
+    def id(self):
+        return self.name()
+
+    def __eq__(self, other):
+        return self.id() == other.id()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def name(self):
         raise Exception("Not implemented")
 

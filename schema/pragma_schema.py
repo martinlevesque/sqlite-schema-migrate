@@ -17,6 +17,9 @@ class PragmaSchema(StatementSchema):
     REGEX = r"PRAGMA\s+(\w+)\s*=\s*(\w+);"
     TYPE = "pragma"
 
+    def id(self):
+        return f"pragma-{self.name()}"
+
     def name(self):
         return self.variable_name()
 

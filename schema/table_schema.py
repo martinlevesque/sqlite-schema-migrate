@@ -19,6 +19,9 @@ class TableSchema(StatementSchema):
     REGEX = r"CREATE\s+TABLE\s+(\w+\.)?(\w+)\s+.+;"
     TYPE = "create_table"
 
+    def id(self):
+        return f"table-{self.name()}"
+
     def prepared_input_statement(self):
         # strip newlines
         return self.statement.replace("\n", " ")

@@ -1,5 +1,6 @@
 import sqlite3
 from dataclasses import dataclass
+from lib import log
 
 
 # communicate with the sqlite database
@@ -11,7 +12,7 @@ class Database:
 
     def __post_init__(self):
         self.conn = sqlite3.connect(self.filepath)
-        print(f"Connected to {self.filepath}")
+        log.debug(f"Connected to {self.filepath}")
 
     def first(self, query):
         return self.conn.execute(query).fetchone()

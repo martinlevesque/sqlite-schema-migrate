@@ -19,6 +19,18 @@ class StatementSchema:
     def name(self):
         raise Exception("Not implemented")
 
+    def schema_name_at(self, expected_index):
+        schema_txt = self.parse().group(expected_index)
+
+        if not schema_txt:
+            return ""
+
+        # if ends with a dot, remove it
+        if schema_txt and schema_txt.endswith("."):
+            schema_txt = schema_txt[:-1]
+
+        return schema_txt
+
     def prepared_input_statement(self):
         return self.statement
 

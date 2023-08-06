@@ -25,16 +25,7 @@ class IndexSchema(StatementSchema):
         return f"index-{self.name()}"
 
     def schema_name(self):
-        schema_txt = self.parse().group(3)
-
-        if not schema_txt:
-            return ""
-
-        # if ends with a dot, remove it
-        if schema_txt and schema_txt.endswith("."):
-            schema_txt = schema_txt[:-1]
-
-        return schema_txt
+        return self.schema_name_at(3)
 
     def index_name(self):
         return self.parse().group(4)

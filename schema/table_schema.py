@@ -15,6 +15,7 @@ from lib import log
 # - if not option full table copy, then:
 #   - support column diff
 
+
 @dataclass
 class TableSchema(StatementSchema):
     statement: str

@@ -10,6 +10,10 @@ from lib import log
 # format
 # CREATE TABLE schema_name.table_name ;
 
+# todo to support diff create table
+# - option full table copy
+# - if not option full table copy, then:
+#   - support column diff
 
 @dataclass
 class TableSchema(StatementSchema):

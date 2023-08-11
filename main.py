@@ -1,5 +1,5 @@
 import sys
-import datetime
+import copy
 from schema import parser as schema_parser
 import state_migrate
 from migrate import apply as migrate_apply
@@ -15,11 +15,13 @@ if __name__ == "__main__":
     desired_schema = schema_parser.parse(stdin_content)
     previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
 
-    new_schema = migrate_apply.apply(
+    all_schema = migrate_apply.apply(
         local_parsed_schema=desired_schema,
         previous_parsed_schema=previous_schema,
         database=db,
     )
+    resulting_schema = copy.deepcopy(desired_schema)
+    resulting_schema.all = all_schema
 
     # insert the schema into the database
-    state_migrate.update_schema_migration_table(db, str(new_schema))
+    state_migrate.update_schema_migration_table(db, str(resulting_schema))

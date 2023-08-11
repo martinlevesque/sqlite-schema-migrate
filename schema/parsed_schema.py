@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class ParsedSchema:
     pragmas: dict
     tables: dict
+    alter_tables: dict
     indexes: dict
     drop_entities: dict
     all: list

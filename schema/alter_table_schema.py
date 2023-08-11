@@ -1,4 +1,4 @@
-import re
+import hashlib
 from dataclasses import dataclass
 from schema.statement_schema import StatementSchema
 from lib import log
@@ -20,7 +20,7 @@ class AlterTableSchema(StatementSchema):
     TYPE = "alter_table"
 
     def id(self):
-        return f"toto"
+        return hashlib.sha256(str(self).encode("utf-8")).hexdigest()
 
     def schema_name(self):
         return self.schema_name_at(1)
@@ -41,23 +41,8 @@ class AlterTableSchema(StatementSchema):
         if previous_schema is None and current_schema:
             # it has not been run yet:
             database.execute(str(current_schema), log_function=log.info)
-
-    def destroy_cmd(self):
-        return f"DROP INDEX {self.index_full_name()};"
+        else:
+            log.debug(f'alter table "{current_schema}" already exists... skipping')
 
     def __str__(self):
-        result = "CREATE "
-
-        if self.is_unique():
-            result += "UNIQUE "
-
-        result += "INDEX "
-
-        result += self.index_full_name()
-
-        result += f" ON {self.table_name()} ({', '.join(self.columns())})"
-
-        if self.where_clause():
-            result += f" WHERE {self.where_clause()}"
-
-        return f"{result};"
+        return self.prepared_input_statement()

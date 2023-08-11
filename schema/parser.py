@@ -4,6 +4,7 @@ from schema.pragma_schema import PragmaSchema
 from schema.index_schema import IndexSchema
 from schema.drop_entity_schema import DropEntitySchema
 from schema.table_schema import TableSchema
+from schema.alter_table_schema import AlterTableSchema
 
 # read an input sql schema content and provide a hash representing the schema
 
@@ -13,11 +14,14 @@ STATEMENT_TYPES = {
     "CREATE UNIQUE INDEX": {"name": "index", "class": IndexSchema},
     "DROP INDEX": {"name": "index", "class": DropEntitySchema},
     "CREATE TABLE": {"name": "table", "class": TableSchema},
+    "ALTER TABLE": {"name": "table", "class": AlterTableSchema},
 }
 
 
 def parse(str_content):
-    result = ParsedSchema(pragmas={}, tables={}, indexes={}, drop_entities={}, all=[])
+    result = ParsedSchema(
+        pragmas={}, tables={}, alter_tables={}, indexes={}, drop_entities={}, all=[]
+    )
 
     pattern = re.compile(
         r"(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA).*?;)\s*(--[^\n]*)?\n",
@@ -46,6 +50,8 @@ def parse(str_content):
                 result.drop_entities[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_table":
                 result.tables[schema_item.name()] = schema_item
+            elif schema_item.TYPE == "alter_table":
+                result.alter_tables[schema_item.name()] = schema_item
             else:
                 raise Exception(f"Unknown schema item type: {schema_item.TYPE}")
 

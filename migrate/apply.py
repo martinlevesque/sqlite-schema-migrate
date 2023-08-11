@@ -28,6 +28,8 @@ def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
             current_schema=current, previous_schema=previous, database=database
         )
 
+    return applied_schema
+
 
 def first_item(items):
     if len(items) > 0:

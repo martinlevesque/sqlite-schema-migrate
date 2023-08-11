@@ -49,7 +49,6 @@ def update_schema_migration_table(database, schema):
         )
         database.commit()
     else:
-
         log.debug("Schema migration already exists... updating")
         database.execute(
             f"UPDATE {TABLE_NAME_SQLITE_SCHEMA_MIGRATE} SET schema = ?, applied_at = ? WHERE rowid = ?;",

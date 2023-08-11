@@ -38,12 +38,9 @@ class TableSchema(StatementSchema):
         return self.parse().group(2)
 
     def table_full_name(self):
-        schema_name = self.schema_name()
-
-        if schema_name:
-            return f"{schema_name}.{self.table_name()}"
-
-        return self.table_name()
+        return StatementSchema.schema_entity_full_name(
+            self.schema_name(), self.table_name()
+        )
 
     def name(self):
         return self.table_full_name()

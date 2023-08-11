@@ -31,6 +31,13 @@ class StatementSchema:
 
         return schema_txt
 
+    @staticmethod
+    def schema_entity_full_name(schema_name, entity_name):
+        if schema_name:
+            return f"{schema_name}.{entity_name}"
+
+        return entity_name
+
     def prepared_input_statement(self):
         return self.statement
 

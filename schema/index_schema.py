@@ -31,12 +31,9 @@ class IndexSchema(StatementSchema):
         return self.parse().group(4)
 
     def index_full_name(self):
-        schema_name = self.schema_name()
-
-        if schema_name:
-            return f"{schema_name}.{self.index_name()}"
-
-        return self.index_name()
+        return StatementSchema.schema_entity_full_name(
+            self.schema_name(), self.index_name()
+        )
 
     def name(self):
         return self.index_full_name()

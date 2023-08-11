@@ -28,12 +28,9 @@ class DropEntitySchema(StatementSchema):
         return self.parse().group(4)
 
     def entity_full_name(self):
-        schema_name = self.schema_name()
-
-        if schema_name:
-            return f"{schema_name}.{self.entity_name()}"
-
-        return self.entity_name()
+        return StatementSchema.schema_entity_full_name(
+            self.schema_name(), self.entity_name()
+        )
 
     def entity_type(self):
         return self.parse().group(1).upper()

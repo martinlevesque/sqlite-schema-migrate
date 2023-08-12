@@ -7,7 +7,9 @@ from lib import log
 # Path: migrate/apply.py
 
 
-def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
+def apply(
+    local_parsed_schema=None, previous_parsed_schema=None, database=None, force=None
+):
     applied_schema = deepcopy(local_parsed_schema.all)
 
     for previous_item in previous_parsed_schema.all:
@@ -25,7 +27,10 @@ def apply(local_parsed_schema=None, previous_parsed_schema=None, database=None):
         any_schema = current or previous
 
         any_schema.apply_changes(
-            current_schema=current, previous_schema=previous, database=database
+            current_schema=current,
+            previous_schema=previous,
+            database=database,
+            force=force,
         )
 
     return applied_schema

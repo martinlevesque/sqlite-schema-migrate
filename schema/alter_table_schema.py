@@ -37,7 +37,9 @@ class AlterTableSchema(StatementSchema):
         return self.table_full_name()
 
     @staticmethod
-    def apply_changes(current_schema=None, previous_schema=None, database=None):
+    def apply_changes(
+        current_schema=None, previous_schema=None, database=None, force=False
+    ):
         if previous_schema is None and current_schema:
             # it has not been run yet:
             database.execute(str(current_schema), log_function=log.info)

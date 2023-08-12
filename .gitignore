@@ -2,7 +2,7 @@
 pyvenv.cfg
 bin/
 include/
-lib/python3.10
+lib/python3.11
 .idea/
 
 **/**/__pycache__/

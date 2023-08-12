@@ -35,7 +35,9 @@ class PragmaSchema(StatementSchema):
         return self.override_value
 
     @staticmethod
-    def apply_changes(current_schema=None, previous_schema=None, database=None):
+    def apply_changes(
+        current_schema=None, previous_schema=None, database=None, force=False
+    ):
         desired_value = current_schema.value()
 
         if previous_schema is None or previous_schema.value() != desired_value:

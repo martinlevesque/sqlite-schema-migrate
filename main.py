@@ -20,6 +20,7 @@ if __name__ == "__main__":
         local_parsed_schema=desired_schema,
         previous_parsed_schema=previous_schema,
         database=db,
+        force=parsed_args.force,
     )
     resulting_schema = copy.deepcopy(desired_schema)
     resulting_schema.all = all_schema

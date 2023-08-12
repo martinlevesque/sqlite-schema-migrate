@@ -61,7 +61,9 @@ class IndexSchema(StatementSchema):
         return self.override_value
 
     @staticmethod
-    def apply_changes(current_schema=None, previous_schema=None, database=None):
+    def apply_changes(
+        current_schema=None, previous_schema=None, database=None, force=False
+    ):
         if previous_schema is None and current_schema:
             # it is new:
             database.execute(str(current_schema), log_function=log.info)

@@ -7,7 +7,7 @@ from migrate import apply as migrate_apply
 import sqlite_db
 
 if __name__ == "__main__":
-    db = sqlite_db.Database(filepath=sys.argv[1])
+    db = sqlite_db.Database(filepath=parsed_args.database)
 
     latest_schema_info = state_migrate.ensure_schema_migration_table_exists(db)
 

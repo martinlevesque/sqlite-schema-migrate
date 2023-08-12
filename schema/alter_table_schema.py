@@ -44,7 +44,8 @@ class AlterTableSchema(StatementSchema):
             # it has not been run yet:
             database.execute(str(current_schema), log_function=log.info)
         else:
-            log.debug(f'alter table "{current_schema}" already exists... skipping')
+            if current_schema:
+                log.debug(f'alter table "{current_schema}" already exists... skipping')
 
     def __str__(self):
         return self.prepared_input_statement()

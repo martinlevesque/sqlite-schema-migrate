@@ -60,10 +60,34 @@ class TableSchema(StatementSchema):
             # does not exist, create it
             database.execute(str(current_schema), log_function=log.info)
         else:
-            log.debug(f"table {current_schema.name()} already exists...")
+            # is there a diff between the two?
+            if str(current_schema) == str(previous_schema):
+                return
+
+            log.debug(f"Table {current_schema.name()} already exists and has changes...")
 
             if force:
-                log.debug(f"should FORCEEEEEEEEEEEEEE")
+                log.debug("will force...")
+                # todo foreign key pragma
+
+                # pragma table_info(tablename);
+
+                database.execute("BEGIN TRANSACTION;", log_function=log.info)
+                database.execute(
+                    f"ALTER TABLE {current_schema.name()} RENAME TO {current_schema.name()}_old;",
+                    log_function=log.info,
+                )
+                database.execute(str(current_schema), log_function=log.info)
+                database.execute(
+                    f"INSERT INTO {current_schema.name()} SELECT * FROM {current_schema.name()}_old;",
+                    log_function=log.info,
+                )
+                database.execute(
+                    f"DROP TABLE {current_schema.name()}_old;", log_function=log.info
+                )
+                database.execute("COMMIT;", log_function=log.info)
+            else:
+                log.debug(f"skipping changes in table {current_schema.name()}")
 
     def __str__(self):
         return f"CREATE TABLE {self.table_full_name()} {self.specs_following_table()};"

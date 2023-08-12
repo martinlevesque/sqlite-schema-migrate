@@ -1,5 +1,6 @@
 import sys
 import copy
+from args import parsed_args
 from schema import parser as schema_parser
 import state_migrate
 from migrate import apply as migrate_apply

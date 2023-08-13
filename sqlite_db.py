@@ -11,7 +11,6 @@ class Database:
     filepath: str
 
     def __post_init__(self):
-        print("connn")
         self.conn = sqlite3.connect(self.filepath)
         log.debug(f"Connected to {self.filepath}")
 
@@ -80,5 +79,4 @@ class Database:
             else:
                 break
 
-        print(f"found_at: {found_at}")
         return sql_line[:found_at] if found_at >= 0 else sql_line

@@ -67,19 +67,31 @@ class TableSchema(StatementSchema):
             log.debug(f"Table {current_schema.name()} already exists and has changes...")
 
             if force:
-                log.debug("will force...")
-                # todo foreign key pragma
-
-                # pragma table_info(tablename);
+                # ensure foreign keys are off
+                database.execute(f"PRAGMA foreign_keys = OFF;")
 
                 database.execute("BEGIN TRANSACTION;", log_function=log.info)
+
+                origin_table_name = f"{current_schema.table_name()}_old"
+
                 database.execute(
-                    f"ALTER TABLE {current_schema.name()} RENAME TO {current_schema.name()}_old;",
+                    f"ALTER TABLE {current_schema.name()} RENAME TO {origin_table_name};",
                     log_function=log.info,
                 )
+
+                # create new table with the new schema
                 database.execute(str(current_schema), log_function=log.info)
+
+                to_table_name = f"{current_schema.table_name()}"
+
+                origin_columns = database.get_table_column_names(origin_table_name)
+                destination_columns = database.get_table_column_names(to_table_name)
+
+                columns_to_copy = list(set(origin_columns) & set(destination_columns))
+                columns_to_copy_s = ", ".join(columns_to_copy)
+
                 database.execute(
-                    f"INSERT INTO {current_schema.name()} SELECT * FROM {current_schema.name()}_old;",
+                    f"INSERT INTO {current_schema.name()} ({columns_to_copy_s}) SELECT {columns_to_copy_s} FROM {current_schema.name()}_old;",
                     log_function=log.info,
                 )
                 database.execute(

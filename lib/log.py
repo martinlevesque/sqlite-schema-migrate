@@ -8,3 +8,7 @@ def debug(message=None):
 
 def info(message=None):
     return stdout(f"INFO: {message}")
+
+
+def error(message=None):
+    return stdout(f"ERROR: {message}")

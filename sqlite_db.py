@@ -27,7 +27,12 @@ class Database:
 
     def execute(self, query, args=None, log_function=None):
         if log_function:
-            log_function(f"Executing: {query} with args: {args}")
+            args_part = ""
+
+            if args:
+                args_part = f" with args: {args}"
+
+            log_function(f"Executing: {query}{args_part}")
 
         if args is None:
             return self.conn.execute(query)
@@ -44,6 +49,11 @@ class Database:
             )
             is not None
         )
+
+    def get_table_column_names(self, table_name):
+        result = self.execute(f"PRAGMA table_info({table_name});")
+
+        return [r[1] for r in result]
 
     def close(self):
         self.conn.close()

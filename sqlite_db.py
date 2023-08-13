@@ -11,6 +11,7 @@ class Database:
     filepath: str
 
     def __post_init__(self):
+        print("connn")
         self.conn = sqlite3.connect(self.filepath)
         log.debug(f"Connected to {self.filepath}")
 
@@ -57,3 +58,27 @@ class Database:
 
     def close(self):
         self.conn.close()
+
+    @staticmethod
+    def strip_comments_in_line(sql_line):
+        current_index = 0
+        found_at = -1
+
+        while current_index >= 0:
+            found_at = sql_line.find("--", current_index)
+
+            if found_at < 0:
+                break
+
+            reminder = sql_line[found_at:]
+
+            if '"' in reminder or "'" in reminder:
+                # ignore
+                current_index = found_at + 2
+                found_at = -1
+                continue
+            else:
+                break
+
+        print(f"found_at: {found_at}")
+        return sql_line[:found_at] if found_at >= 0 else sql_line

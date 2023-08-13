@@ -14,4 +14,10 @@ parser.add_argument(
     help="force the origin schema (e.g., if table exists, drop it and recreate, and copy it)",
 )
 
+parser.add_argument(
+    "-s",
+    "--schema",
+    help="SQL schema file to migrate to",
+)
+
 parsed_args = parser.parse_args()

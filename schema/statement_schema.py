@@ -38,6 +38,10 @@ class StatementSchema:
 
         return entity_name
 
+    """
+    prepare the input statement for parsing
+    """
+
     def prepared_input_statement(self):
         return self.statement
 

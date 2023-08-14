@@ -80,3 +80,12 @@ class Database:
                 break
 
         return sql_line[:found_at] if found_at >= 0 else sql_line
+
+    @staticmethod
+    def strip_comments(sql):
+        lines = []
+
+        for line in sql.split("\n"):
+            lines.append(Database.strip_comments_in_line(line))
+
+        return "\n".join(lines)

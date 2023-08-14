@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from schema.statement_schema import StatementSchema
+from sqlite_db import Database
 from lib import log
 
 
@@ -24,7 +25,9 @@ class TableSchema(StatementSchema):
 
     def prepared_input_statement(self):
         # strip newlines
-        return self.statement.replace("\n", " ")
+        statement_stripped_comments = Database.strip_comments(self.statement)
+
+        return statement_stripped_comments.replace("\n", " ")
 
     def schema_name(self):
         return self.schema_name_at(1)

@@ -1,4 +1,5 @@
 import argparse
+from constants import *
 
 parser = argparse.ArgumentParser(
     prog="sqlite-schema-migration",
@@ -14,11 +15,16 @@ parser.add_argument(
     help="force the origin schema (e.g., if table exists, drop it and recreate, and copy it)",
 )
 
-# todo!
 parser.add_argument(
     "-s",
     "--schema",
-    help="SQL schema file to migrate to",
+    help="SQL schema file path to migrate to",
+)
+
+# todo!
+parser.add_argument(
+    "--init-db-schema",
+    help="SQL schema file to initialize the database with, in table _sqlite_schema_migrate",
 )
 
 parsed_args = parser.parse_args()

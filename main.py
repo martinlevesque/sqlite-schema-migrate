@@ -11,7 +11,11 @@ if __name__ == "__main__":
 
     latest_schema_info = state_migrate.ensure_schema_migration_table_exists(db)
 
-    stdin_content = sys.stdin.read()
+    if parsed_args.schema:
+        with open(parsed_args.schema, "r") as f:
+            stdin_content = f.read()
+    else:
+        stdin_content = sys.stdin.read()
 
     desired_schema = schema_parser.parse(stdin_content)
     previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))

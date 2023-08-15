@@ -17,3 +17,8 @@ sqlite3 test.db 'select name, description from categories;' | grep 'cat1|cat1des
 
 cat tests/fixtures/schema-samples/categories_with_new_column.sql | python main.py --force test.db
 sqlite3 test.db 'select name, description, age from categories;' | grep 'cat1|cat1desc|18'
+
+# --schema argument
+rm -f test.db
+python main.py test.db --schema tests/fixtures/schema-samples/categories.sql
+sqlite3 -line test.db '.schema categories' | grep "CREATE TABLE categories"

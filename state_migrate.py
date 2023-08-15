@@ -1,7 +1,6 @@
 import datetime
 from lib import log
-
-TABLE_NAME_SQLITE_SCHEMA_MIGRATE = "_sqlite_schema_migrate"
+from constants import *
 
 
 def schema_migration_table_exists(database):

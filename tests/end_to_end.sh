@@ -19,6 +19,16 @@ cat tests/fixtures/schema-samples/categories_with_new_column.sql | python main.p
 sqlite3 test.db 'select name, description, age from categories;' | grep 'cat1|cat1desc|18'
 
 # --schema argument
+echo "## --schema argument"
 rm -f test.db
 python main.py test.db --schema tests/fixtures/schema-samples/categories.sql
 sqlite3 -line test.db '.schema categories' | grep "CREATE TABLE categories"
+
+# --init-db-schema argument
+echo "## --init-db-schema argument"
+rm -f test.db
+python main.py test.db --schema tests/fixtures/schema-samples/categories.sql
+sqlite3 -line test.db 'drop table _sqlite_schema_migrate;'
+python main.py test.db --schema tests/fixtures/schema-samples/categories.sql --init-db-schema
+sqlite3 -line test.db 'select * from _sqlite_schema_migrate;' | grep "CREATE TABLE categories"
+sqlite3 -line test.db 'select * from _sqlite_schema_migrate;' | grep "ALTER TABLE categories"

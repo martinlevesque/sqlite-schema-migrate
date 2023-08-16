@@ -24,6 +24,7 @@ parser.add_argument(
 # todo!
 parser.add_argument(
     "--init-db-schema",
+    action="store_true",
     help="SQL schema file to initialize the database with, in table _sqlite_schema_migrate",
 )
 

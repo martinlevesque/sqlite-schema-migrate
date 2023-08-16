@@ -18,14 +18,19 @@ if __name__ == "__main__":
         stdin_content = sys.stdin.read()
 
     desired_schema = schema_parser.parse(stdin_content)
-    previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
 
-    all_schema = migrate_apply.apply(
-        local_parsed_schema=desired_schema,
-        previous_parsed_schema=previous_schema,
-        database=db,
-        force=parsed_args.force,
-    )
+    if not parsed_args.init_db_schema:
+        previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
+
+        all_schema = migrate_apply.apply(
+            local_parsed_schema=desired_schema,
+            previous_parsed_schema=previous_schema,
+            database=db,
+            force=parsed_args.force,
+        )
+    else:
+        all_schema = desired_schema.all
+
     resulting_schema = copy.deepcopy(desired_schema)
     resulting_schema.all = all_schema
 

@@ -63,12 +63,16 @@ class IndexSchema(StatementSchema):
     def apply_changes(
         current_schema=None, previous_schema=None, database=None, force=False
     ):
+        state_result = ""
+
         if previous_schema is None and current_schema:
             # it is new:
             database.execute(str(current_schema), log_function=log.info)
+            state_result = "create"
         elif current_schema is None and previous_schema:
             # it was removed:
             database.execute(previous_schema.destroy_cmd(), log_function=log.info)
+            state_result = "remove"
         elif (
             current_schema
             and previous_schema
@@ -77,6 +81,9 @@ class IndexSchema(StatementSchema):
             # recreate it
             database.execute(previous_schema.destroy_cmd(), log_function=log.info)
             database.execute(str(current_schema), log_function=log.info)
+            state_result = "update"
+
+        return state_result
 
     def destroy_cmd(self):
         return f"DROP INDEX {self.index_full_name()};"

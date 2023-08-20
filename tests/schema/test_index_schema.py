@@ -187,6 +187,6 @@ def test_index_schema_apply_changes_index_already_exists_and_did_changed():
     )
 
     assert executed_queries == [
-        "DROP INDEX schema.index_name;",
+        "DROP INDEX IF EXISTS schema.index_name;",
         "CREATE INDEX schema.index_name ON table_name (column_name1) WHERE col1 = 'test';",
     ]

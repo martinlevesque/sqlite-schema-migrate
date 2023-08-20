@@ -86,7 +86,7 @@ class IndexSchema(StatementSchema):
         return state_result
 
     def destroy_cmd(self):
-        return f"DROP INDEX {self.index_full_name()};"
+        return f"DROP INDEX IF EXISTS {self.index_full_name()};"
 
     def __str__(self):
         result = "CREATE "

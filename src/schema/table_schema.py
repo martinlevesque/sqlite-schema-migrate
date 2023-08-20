@@ -53,9 +53,15 @@ class TableSchema(StatementSchema):
     def apply_changes(
         current_schema=None, previous_schema=None, database=None, force=False
     ):
+        state_result = ""
+
         if previous_schema is None:
             # does not exist, create it
             database.execute(str(current_schema), log_function=log.info)
+        elif current_schema is None and previous_schema:
+            # it was removed:
+            database.execute(previous_schema.destroy_cmd(), log_function=log.info)
+            state_result = "remove"
         else:
             # is there a diff between the two?
             if str(current_schema) == str(previous_schema):
@@ -97,6 +103,11 @@ class TableSchema(StatementSchema):
                 database.execute("COMMIT;", log_function=log.info)
             else:
                 log.debug(f"skipping changes in table {current_schema.name()}")
+
+        return state_result
+
+    def destroy_cmd(self):
+        return f"DROP TABLE IF EXISTS {self.table_full_name()};"
 
     def __str__(self):
         return f"CREATE TABLE {self.table_full_name()} {self.specs_following_table()};"

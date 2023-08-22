@@ -40,12 +40,18 @@ class AlterTableSchema(StatementSchema):
     def apply_changes(
         current_schema=None, previous_schema=None, database=None, force=False
     ):
+        state_result = ""
+
         if previous_schema is None and current_schema:
             # it has not been run yet:
             database.execute(str(current_schema), log_function=log.info)
+        elif current_schema is None and previous_schema:
+            state_result = "remove"
         else:
             if current_schema:
                 log.debug(f'alter table "{current_schema}" already exists... skipping')
+
+        return state_result
 
     def __str__(self):
         return self.prepared_input_statement()

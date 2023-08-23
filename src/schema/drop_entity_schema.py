@@ -48,9 +48,15 @@ class DropEntitySchema(StatementSchema):
     def apply_changes(
         current_schema=None, previous_schema=None, database=None, force=False
     ):
+        state_result = ""
+
         if current_schema:
             # it is new:
             database.execute(str(current_schema), log_function=log.info)
+        elif current_schema is None and previous_schema:
+            state_result = "remove"
+
+        return state_result
 
     def __str__(self):
         if_exists_txt = "IF EXISTS" if self.is_if_exists() else ""

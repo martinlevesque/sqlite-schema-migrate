@@ -1,3 +1,3 @@
 
 test:
-	PYTHONPATH=src python -m pytest
+	python -m pytest

@@ -1,3 +1,4 @@
+import hashlib
 import re
 from dataclasses import dataclass
 
@@ -9,6 +10,9 @@ class StatementSchema:
 
     def id(self):
         return self.name()
+
+    def statement_hash_id(self):
+        return hashlib.sha256(str(self).encode("utf-8")).hexdigest()
 
     def __eq__(self, other):
         return self.id() == other.id()

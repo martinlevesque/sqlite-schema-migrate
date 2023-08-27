@@ -20,7 +20,7 @@ class AlterTableSchema(StatementSchema):
     TYPE = "alter_table"
 
     def id(self):
-        return hashlib.sha256(str(self).encode("utf-8")).hexdigest()
+        return self.statement_hash_id()
 
     def schema_name(self):
         return self.schema_name_at(1)

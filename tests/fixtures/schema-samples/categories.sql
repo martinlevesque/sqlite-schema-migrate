@@ -13,6 +13,9 @@ CREATE TABLE categories (
 	FOREIGN KEY(parent_category_id) REFERENCES categories(id),
 	UNIQUE (name)
 );
+INSERT INTO categories (id, name) VALUES (1, 'category-test-1');
+INSERT INTO categories (id, name) VALUES (2, 'category-test-2');
+
 ALTER TABLE categories ADD COLUMN description VARCHAR(200) DEFAULT '';
 
 DROP INDEX IF EXISTS myindex_test;

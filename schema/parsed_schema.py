@@ -6,6 +6,7 @@ class ParsedSchema:
     pragmas: dict
     tables: dict
     alter_tables: dict
+    data_mutations: dict
     indexes: dict
     drop_entities: dict
     all: list

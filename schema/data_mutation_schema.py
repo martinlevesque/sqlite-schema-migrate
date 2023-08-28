@@ -14,7 +14,6 @@ class DataMutationSchema(StatementSchema):
     base_instruction: str
 
     REGEX = r"(WITH\s+(RECURSIVE)?.*)?(INSERT\s+(OR\s+(ABORT|FAIL|IGNORE|REPLACE|ROLLBACK))?INTO).+;"
-    # REGEX = r"DROP\s+(TABLE|INDEX)?\s*(IF EXISTS)?\s*(\w+\.)?(\w+);"
     TYPE = "data_mutation"
 
     def id(self):

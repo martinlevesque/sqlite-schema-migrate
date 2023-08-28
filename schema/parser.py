@@ -1,4 +1,6 @@
 import re
+
+from schema.data_mutation_schema import DataMutationSchema
 from schema.parsed_schema import ParsedSchema
 from schema.pragma_schema import PragmaSchema
 from schema.index_schema import IndexSchema
@@ -15,16 +17,28 @@ STATEMENT_TYPES = {
     "DROP INDEX": {"name": "index", "class": DropEntitySchema},
     "CREATE TABLE": {"name": "table", "class": TableSchema},
     "ALTER TABLE": {"name": "table", "class": AlterTableSchema},
+    "WITH INSERT": {"name": "insert", "class": DataMutationSchema},
+    "WITH RECURSIVE INSERT": {"name": "insert", "class": DataMutationSchema},
+    "INSERT": {"name": "insert", "class": DataMutationSchema},
+    "WITH REPLACE": {"name": "insert", "class": DataMutationSchema},
+    "WITH RECURSIVE REPLACE": {"name": "insert", "class": DataMutationSchema},
+    "REPLACE": {"name": "insert", "class": DataMutationSchema},
 }
 
 
 def parse(str_content):
     result = ParsedSchema(
-        pragmas={}, tables={}, alter_tables={}, indexes={}, drop_entities={}, all=[]
+        pragmas={},
+        tables={},
+        alter_tables={},
+        data_mutations={},
+        indexes={},
+        drop_entities={},
+        all=[],
     )
 
     pattern = re.compile(
-        r"(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA).*?;)\s*(--[^\n]*)?\n",
+        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH INSERT|WITH RECURSIVE INSERT|INSERT).*?;)\s*(--[^\n]*)?\n""",
         re.DOTALL | re.MULTILINE,
     )
 
@@ -41,7 +55,6 @@ def parse(str_content):
             schema_item = statement_setup["class"](
                 statement=statement, base_instruction=base_instruction
             )
-
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":
@@ -52,6 +65,8 @@ def parse(str_content):
                 result.tables[schema_item.name()] = schema_item
             elif schema_item.TYPE == "alter_table":
                 result.alter_tables[schema_item.name()] = schema_item
+            elif schema_item.TYPE == "data_mutation":
+                result.data_mutations[schema_item.name()] = schema_item
             else:
                 raise Exception(f"Unknown schema item type: {schema_item.TYPE}")
 

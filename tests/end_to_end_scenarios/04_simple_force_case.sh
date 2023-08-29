@@ -1,3 +1,5 @@
+set -e
+
 sqlite3 test.db 'insert into categories (name, description) values ("cat1", "cat1desc")'
 sqlite3 test.db 'select name, description from categories;' | grep 'cat1|cat1desc'
 

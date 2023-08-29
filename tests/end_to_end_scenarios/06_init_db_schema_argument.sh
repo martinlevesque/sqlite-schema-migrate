@@ -1,3 +1,5 @@
+set -e
+
 rm -f test.db
 $BASE_CMD test.db --schema tests/fixtures/schema-samples/categories.sql
 sqlite3 -line test.db 'drop table _sqlite_schema_migrate;'

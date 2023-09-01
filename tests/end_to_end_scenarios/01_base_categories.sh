@@ -7,3 +7,4 @@ sqlite3 -line test.db 'select name from categories where name = "category-test-1
 sqlite3 -line test.db 'select name from categories where name = "category-test-1"' | grep "category-test-1" | wc -l | grep "1"
 sqlite3 -line test.db 'select name from categories where name = "category-test-2"' | grep "category-test-2"
 sqlite3 -line test.db 'select name from categories where name = "category-test-2"' | grep "category-test-2" | wc -l | grep "1"
+sqlite3 -line test.db 'select name from categories where id = 3' | grep "category-test-4" | wc -l | grep "1"

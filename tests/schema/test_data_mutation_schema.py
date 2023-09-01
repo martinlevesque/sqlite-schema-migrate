@@ -10,6 +10,15 @@ def test_data_mutation_parse_simple_insert_happy_path():
     assert schema.parse()
 
 
+def test_data_mutation_parse_simple_update_happy_path():
+    schema = DataMutationSchema(
+        statement="UPDATE categories SET name = 'category-test-4' WHERE id = 3;",
+        base_instruction="UPDATE",
+    )
+
+    assert schema.parse()
+
+
 def test_data_mutation_str_happy_path():
     schema = DataMutationSchema(
         statement="INSERT INTO table(v1, v2) VALUES (v1, v2);",

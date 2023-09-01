@@ -13,7 +13,10 @@ class DataMutationSchema(StatementSchema):
     statement: str
     base_instruction: str
 
-    REGEX = r"(WITH\s+(RECURSIVE)?.*)?(INSERT\s+(OR\s+(ABORT|FAIL|IGNORE|REPLACE|ROLLBACK))?INTO).+;"
+    REGEX_OR = "(OR\\s+(ABORT|FAIL|IGNORE|REPLACE|ROLLBACK))?"
+    REGEX_INSERT_CASE = f"INSERT\\s+{REGEX_OR}INTO"
+    REGEX_UPDATE_CASE = f"UPDATE\\s+{REGEX_OR}\\s*\\w+\\s+SET\\s*\\w+"
+    REGEX = rf"(WITH\s+(RECURSIVE)?.*)?({REGEX_INSERT_CASE})|({REGEX_UPDATE_CASE}).+;"
     TYPE = "data_mutation"
 
     def id(self):

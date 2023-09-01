@@ -17,12 +17,10 @@ STATEMENT_TYPES = {
     "DROP INDEX": {"name": "index", "class": DropEntitySchema},
     "CREATE TABLE": {"name": "table", "class": TableSchema},
     "ALTER TABLE": {"name": "table", "class": AlterTableSchema},
-    "WITH INSERT": {"name": "insert", "class": DataMutationSchema},
-    "WITH RECURSIVE INSERT": {"name": "insert", "class": DataMutationSchema},
     "INSERT": {"name": "insert", "class": DataMutationSchema},
-    "WITH REPLACE": {"name": "insert", "class": DataMutationSchema},
-    "WITH RECURSIVE REPLACE": {"name": "insert", "class": DataMutationSchema},
+    "WITH": {"name": "insert", "class": DataMutationSchema},
     "REPLACE": {"name": "insert", "class": DataMutationSchema},
+    "UPDATE": {"name": "update", "class": DataMutationSchema},
 }
 
 
@@ -38,7 +36,7 @@ def parse(str_content):
     )
 
     pattern = re.compile(
-        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH INSERT|WITH RECURSIVE INSERT|INSERT).*?;)\s*(--[^\n]*)?\n""",
+        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|UPDATE).*?;)\s*(--[^\n]*)?\n""",
         re.DOTALL | re.MULTILINE,
     )
 
@@ -49,12 +47,14 @@ def parse(str_content):
         statement_setup = STATEMENT_TYPES.get(base_instruction, None)
 
         if statement_setup is None:
+            print(f"unknown statement type!!!")
             # raise Exception(f"Unknown statement type: {base_instruction}")
             continue
         else:
             schema_item = statement_setup["class"](
                 statement=statement, base_instruction=base_instruction
             )
+            print(f"current statement {statement}")
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":

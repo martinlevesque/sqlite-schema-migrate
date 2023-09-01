@@ -15,6 +15,8 @@ CREATE TABLE categories (
 );
 INSERT INTO categories (id, name) VALUES (1, 'category-test-1');
 INSERT INTO categories (id, name) VALUES (2, 'category-test-2');
+INSERT INTO categories (id, name) VALUES (3, 'category-test-3');
+UPDATE categories SET name = 'category-test-4' WHERE id = 3;
 
 ALTER TABLE categories ADD COLUMN description VARCHAR(200) DEFAULT '';
 

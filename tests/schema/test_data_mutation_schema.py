@@ -19,6 +19,15 @@ def test_data_mutation_parse_simple_update_happy_path():
     assert schema.parse()
 
 
+def test_data_mutation_parse_simple_delete_happy_path():
+    schema = DataMutationSchema(
+        statement="DELETE FROM categories WHERE id = 4;",
+        base_instruction="DELETE FROM",
+    )
+
+    assert schema.parse()
+
+
 def test_data_mutation_str_happy_path():
     schema = DataMutationSchema(
         statement="INSERT INTO table(v1, v2) VALUES (v1, v2);",

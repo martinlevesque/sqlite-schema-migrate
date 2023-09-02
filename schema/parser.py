@@ -21,6 +21,7 @@ STATEMENT_TYPES = {
     "WITH": {"name": "insert", "class": DataMutationSchema},
     "REPLACE": {"name": "insert", "class": DataMutationSchema},
     "UPDATE": {"name": "update", "class": DataMutationSchema},
+    "DELETE FROM": {"name": "update", "class": DataMutationSchema},
 }
 
 
@@ -36,7 +37,7 @@ def parse(str_content):
     )
 
     pattern = re.compile(
-        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|UPDATE).*?;)\s*(--[^\n]*)?\n""",
+        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|UPDATE|DELETE FROM).*?;)\s*(--[^\n]*)?\n""",
         re.DOTALL | re.MULTILINE,
     )
 

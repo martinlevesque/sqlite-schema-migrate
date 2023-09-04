@@ -20,6 +20,17 @@ def test_create_table_table_name_with_override():
     assert schema.table_name() == "world"
 
 
+def test_create_table_name_with_special_characters():
+    schema = TableSchema(
+        statement="CREATE TABLE [what].[Categories]( [CategoryID] INTEGER PRIMARY KEY AUTOINCREMENT, [CategoryName] TEXT, [Description] TEXT, [Picture] BLOB);",
+        base_instruction="CREATE TABLE",
+    )
+
+    assert schema.schema_name() == "[what]"
+    assert schema.table_name() == "[Categories]"
+    assert schema.name() == "[what].[Categories]"
+
+
 def test_create_table_str_happy_path():
     schema = TableSchema(
         statement="CREATE TABLE hello ...;",
@@ -47,7 +58,7 @@ def test_create_table_str_with_special_characters():
 
     assert (
         str(schema)
-        == "CREATE TABLE  [Categories]( [CategoryID] INTEGER PRIMARY KEY AUTOINCREMENT, [CategoryName] TEXT, [Description] TEXT, [Picture] BLOB);"
+        == "CREATE TABLE [Categories] ( [CategoryID] INTEGER PRIMARY KEY AUTOINCREMENT, [CategoryName] TEXT, [Description] TEXT, [Picture] BLOB);"
     )
 
 

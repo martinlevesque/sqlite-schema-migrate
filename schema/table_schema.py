@@ -17,7 +17,7 @@ class TableSchema(StatementSchema):
     base_instruction: str
     override_table_name: str = ""
 
-    REGEX = rf"CREATE\s+TABLE\s*({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
+    REGEX = rf"CREATE\s+TABLE\s+({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
     TYPE = "create_table"
 
     def id(self):
@@ -30,7 +30,7 @@ class TableSchema(StatementSchema):
         return statement_stripped_comments.replace("\n", " ")
 
     def schema_name(self):
-        return self.schema_name_at(2)
+        return self.schema_name_at(1)
 
     def table_name(self):
         if self.override_table_name:
@@ -77,8 +77,12 @@ class TableSchema(StatementSchema):
 
                 origin_table_name = f"{current_schema.table_name()}_old"
 
+                replace_statement = (
+                    f"ALTER TABLE {current_schema.name()} RENAME TO {origin_table_name};"
+                )
+                replace_statement = TableSchema.clean_statement(replace_statement)
                 database.execute(
-                    f"ALTER TABLE {current_schema.name()} RENAME TO {origin_table_name};",
+                    replace_statement,
                     log_function=log.info,
                 )
 
@@ -87,24 +91,37 @@ class TableSchema(StatementSchema):
 
                 to_table_name = f"{current_schema.table_name()}"
 
-                origin_columns = database.get_table_column_names(origin_table_name)
-                destination_columns = database.get_table_column_names(to_table_name)
+                origin_columns = database.get_table_column_names(
+                    TableSchema.clean_statement(origin_table_name)
+                )
+                destination_columns = database.get_table_column_names(
+                    TableSchema.clean_statement(to_table_name)
+                )
 
                 columns_to_copy = list(set(origin_columns) & set(destination_columns))
                 columns_to_copy_s = ", ".join(columns_to_copy)
 
                 database.execute(
-                    f"INSERT INTO {current_schema.name()} ({columns_to_copy_s}) SELECT {columns_to_copy_s} FROM {current_schema.name()}_old;",
+                    TableSchema.clean_statement(
+                        f"INSERT INTO {current_schema.name()} ({columns_to_copy_s}) SELECT {columns_to_copy_s} FROM {current_schema.name()}_old;",
+                    ),
                     log_function=log.info,
                 )
                 database.execute(
-                    f"DROP TABLE {current_schema.name()}_old;", log_function=log.info
+                    TableSchema.clean_statement(
+                        f"DROP TABLE {current_schema.name()}_old;"
+                    ),
+                    log_function=log.info,
                 )
                 database.execute("COMMIT;", log_function=log.info)
             else:
                 log.debug(f"skipping changes in table {current_schema.name()}")
 
         return state_result
+
+    @staticmethod
+    def clean_statement(current_statement):
+        return current_statement.replace("[", "").replace("]", "")
 
     def destroy_cmd(self):
         return f"DROP TABLE IF EXISTS {self.table_full_name()};"

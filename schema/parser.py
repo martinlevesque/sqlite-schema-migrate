@@ -55,7 +55,6 @@ def parse(str_content):
             schema_item = statement_setup["class"](
                 statement=statement, base_instruction=base_instruction
             )
-            print(f"current statement {statement}")
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":

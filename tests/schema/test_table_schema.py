@@ -39,6 +39,18 @@ def test_create_table_str_with_override():
     assert str(schema) == "CREATE TABLE world ...;"
 
 
+def test_create_table_str_with_special_characters():
+    schema = TableSchema(
+        statement="CREATE TABLE [Categories]( [CategoryID] INTEGER PRIMARY KEY AUTOINCREMENT, [CategoryName] TEXT, [Description] TEXT, [Picture] BLOB);",
+        base_instruction="CREATE TABLE",
+    )
+
+    assert (
+        str(schema)
+        == "CREATE TABLE  [Categories]( [CategoryID] INTEGER PRIMARY KEY AUTOINCREMENT, [CategoryName] TEXT, [Description] TEXT, [Picture] BLOB);"
+    )
+
+
 # prepared_input_statement
 
 

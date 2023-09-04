@@ -17,7 +17,7 @@ class TableSchema(StatementSchema):
     base_instruction: str
     override_table_name: str = ""
 
-    REGEX = r"CREATE\s+TABLE\s+(\w+\.)?(\w+)\s+(.+);"
+    REGEX = rf"CREATE\s+TABLE\s*({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
     TYPE = "create_table"
 
     def id(self):
@@ -30,13 +30,13 @@ class TableSchema(StatementSchema):
         return statement_stripped_comments.replace("\n", " ")
 
     def schema_name(self):
-        return self.schema_name_at(1)
+        return self.schema_name_at(2)
 
     def table_name(self):
         if self.override_table_name:
             return self.override_table_name
 
-        return self.parse().group(2)
+        return str(self.parse().group(3)).strip()
 
     def table_full_name(self):
         return StatementSchema.schema_entity_full_name(
@@ -44,7 +44,7 @@ class TableSchema(StatementSchema):
         )
 
     def specs_following_table(self):
-        return self.parse().group(3)
+        return self.parse().group(5)
 
     def name(self):
         return self.table_full_name()

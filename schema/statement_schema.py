@@ -8,6 +8,8 @@ class StatementSchema:
     statement: str
     base_instruction: str
 
+    REGEX_TERM_NAME = "(\\w|\s|[|])+"
+
     def id(self):
         return self.name()
 
@@ -33,7 +35,7 @@ class StatementSchema:
         if schema_txt and schema_txt.endswith("."):
             schema_txt = schema_txt[:-1]
 
-        return schema_txt
+        return str(schema_txt).strip()
 
     @staticmethod
     def schema_entity_full_name(schema_name, entity_name):

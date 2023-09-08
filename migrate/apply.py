@@ -1,5 +1,8 @@
 from copy import deepcopy
 
+from schema.parsed_schema import ParsedSchema
+from sqlite_db import Database
+
 
 # given the local schema, and remote schema, apply the diffs from the local schema to the remote schema
 
@@ -7,7 +10,10 @@ from copy import deepcopy
 
 
 def apply(
-    local_parsed_schema=None, previous_parsed_schema=None, database=None, force=None
+    local_parsed_schema: ParsedSchema,
+    previous_parsed_schema: ParsedSchema,
+    database: Database,
+    force: bool,
 ):
     applied_schema = deepcopy(local_parsed_schema.all)
 
@@ -26,6 +32,9 @@ def apply(
         )
 
         any_schema = current or previous
+
+        if any_schema is None:
+            continue
 
         state_result = any_schema.apply_changes(
             current_schema=current,

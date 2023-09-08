@@ -24,10 +24,7 @@ def main():
         previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
 
         all_schema = migrate_apply.apply(
-            local_parsed_schema=desired_schema,
-            previous_parsed_schema=previous_schema,
-            database=db,
-            force=parsed_args.force,
+            desired_schema, previous_schema, db, parsed_args.force
         )
     else:
         all_schema = desired_schema.all

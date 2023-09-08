@@ -51,7 +51,10 @@ class TableSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
+        current_schema=None,
+        previous_schema=None,
+        database: Database | None = None,
+        force: bool = False,
     ):
         state_result = ""
 

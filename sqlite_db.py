@@ -2,7 +2,6 @@ import sqlite3
 from dataclasses import dataclass
 from lib import log
 
-
 # communicate with the sqlite database
 
 

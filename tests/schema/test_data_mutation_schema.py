@@ -44,5 +44,6 @@ def test_data_mutation_id_happy_path():
     )
 
     assert (
-        schema.id() == "2dffe7fe8b64a699d2797e53ca589815e70e8817c85fb07199185df28e53419b"
+        schema.id()
+        == "2dffe7fe8b64a699d2797e53ca589815e70e8817c85fb07199185df28e53419b"
     )

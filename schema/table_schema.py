@@ -51,9 +51,9 @@ class TableSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema=None,
-        previous_schema=None,
-        database: Database | None = None,
+        current_schema: StatementSchema,
+        previous_schema: StatementSchema,
+        database: Database,
         force: bool = False,
     ):
         state_result = ""
@@ -70,7 +70,9 @@ class TableSchema(StatementSchema):
             if str(current_schema) == str(previous_schema):
                 return
 
-            log.debug(f"Table {current_schema.name()} already exists and has changes...")
+            log.debug(
+                f"Table {current_schema.name()} already exists and has changes..."
+            )
 
             if force:
                 # ensure foreign keys are off
@@ -80,9 +82,7 @@ class TableSchema(StatementSchema):
 
                 origin_table_name = f"{current_schema.table_name()}_old"
 
-                replace_statement = (
-                    f"ALTER TABLE {current_schema.name()} RENAME TO {origin_table_name};"
-                )
+                replace_statement = f"ALTER TABLE {current_schema.name()} RENAME TO {origin_table_name};"
                 replace_statement = TableSchema.clean_statement(replace_statement)
                 database.execute(
                     replace_statement,

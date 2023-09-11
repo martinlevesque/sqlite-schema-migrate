@@ -71,4 +71,6 @@ def test_create_table_prepared_input_statement_happy_path():
         base_instruction="CREATE TABLE",
     )
 
-    assert schema.prepared_input_statement() == "CREATE TABLE hello  test,  test2,  ...;"
+    assert (
+        schema.prepared_input_statement() == "CREATE TABLE hello  test,  test2,  ...;"
+    )

@@ -24,7 +24,7 @@ class Database:
 
         return row[0]
 
-    def execute(self, query, args=None, log_function=None):
+    def execute(self, query: str, args=None, log_function=None):
         if log_function:
             args_part = ""
 

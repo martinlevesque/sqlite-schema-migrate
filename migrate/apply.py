@@ -26,7 +26,9 @@ def apply(
     deleted_ids = []
 
     for item in applied_schema:
-        current = first_item([x for x in local_parsed_schema.all if x.id() == item.id()])
+        current = first_item(
+            [x for x in local_parsed_schema.all if x.id() == item.id()]
+        )
         previous = first_item(
             [x for x in previous_parsed_schema.all if x.id() == item.id()]
         )
@@ -37,10 +39,10 @@ def apply(
             continue
 
         state_result = any_schema.apply_changes(
-            current_schema=current,
-            previous_schema=previous,
-            database=database,
-            force=force,
+            current,
+            previous,
+            database,
+            force,
         )
 
         if state_result == "remove":
@@ -91,9 +93,9 @@ def apply_items(
         given_current_schema = getattr(current_parsed_schema, attribute_name_items).get(
             name, None
         )
-        given_previous_schema = getattr(previous_parsed_schema, attribute_name_items).get(
-            name, None
-        )
+        given_previous_schema = getattr(
+            previous_parsed_schema, attribute_name_items
+        ).get(name, None)
 
         any_schema = given_current_schema or given_previous_schema
         any_schema.apply_changes(

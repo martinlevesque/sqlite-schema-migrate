@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import List
+
+from schema.statement_schema import StatementSchema
 
 
 @dataclass
@@ -9,7 +12,7 @@ class ParsedSchema:
     data_mutations: dict
     indexes: dict
     drop_entities: dict
-    all: list
+    all: List[StatementSchema]
 
     def __str__(self):
         result = ""

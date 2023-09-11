@@ -2,6 +2,7 @@ import hashlib
 from dataclasses import dataclass
 from schema.statement_schema import StatementSchema
 from lib import log
+from sqlite_db import Database
 
 
 # doc:
@@ -25,7 +26,7 @@ class AlterTableSchema(StatementSchema):
     def schema_name(self):
         return self.schema_name_at(1)
 
-    def table_name(self):
+    def table_name(self) -> str:
         return self.parse().group(2)
 
     def table_full_name(self):
@@ -38,7 +39,10 @@ class AlterTableSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
+        current_schema: StatementSchema | None,
+        previous_schema: StatementSchema | None,
+        database: Database,
+        force: bool = False,
     ):
         state_result = ""
 

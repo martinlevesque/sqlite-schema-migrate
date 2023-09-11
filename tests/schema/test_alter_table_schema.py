@@ -53,5 +53,6 @@ def test_alter_table_table_id_happy_path():
     )
 
     assert (
-        schema.id() == "737d0e49c588504f0f6c7ecf959af3fa0f88f5aff78a10b267dc50d59ef32aac"
+        schema.id()
+        == "737d0e49c588504f0f6c7ecf959af3fa0f88f5aff78a10b267dc50d59ef32aac"
     )

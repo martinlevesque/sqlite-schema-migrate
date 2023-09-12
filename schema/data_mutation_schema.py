@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
 from lib import log
+from sqlite_db import Database
 
 
 # example:
@@ -20,16 +21,19 @@ class DataMutationSchema(StatementSchema):
     REGEX = rf"(WITH\s+(RECURSIVE)?.*)?({REGEX_INSERT_CASE})|({REGEX_UPDATE_CASE})|({REGEX_DELETE_CASE}).+;"
     TYPE = "data_mutation"
 
-    def id(self):
+    def id(self) -> str:
         return self.statement_hash_id()
 
-    def name(self):
+    def name(self) -> str:
         return self.id()
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
-    ):
+        current_schema: StatementSchema | None,
+        previous_schema: StatementSchema | None,
+        database: Database,
+        force: bool = False,
+    ) -> str:
         state_result = ""
 
         if current_schema:
@@ -40,5 +44,5 @@ class DataMutationSchema(StatementSchema):
 
         return state_result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.statement

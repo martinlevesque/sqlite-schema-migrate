@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
 from lib import log
+from sqlite_db import Database
 
 
 # doc:
@@ -20,38 +21,38 @@ class IndexSchema(StatementSchema):
     REGEX = r"CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\)\s*(WHERE\s+(.*))?;"
     TYPE = "create_index"
 
-    def id(self):
+    def id(self) -> str:
         return f"index-{self.name()}"
 
-    def schema_name(self):
+    def schema_name(self) -> str:
         return self.schema_name_at(3)
 
-    def index_name(self):
+    def index_name(self) -> str:
         return self.parse().group(4)
 
-    def index_full_name(self):
+    def index_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.index_name()
         )
 
-    def name(self):
+    def name(self) -> str:
         return self.index_full_name()
 
-    def table_name(self):
+    def table_name(self) -> str:
         return self.parse().group(5)
 
-    def is_unique(self):
+    def is_unique(self) -> bool:
         return str(self.parse().group(1)).upper() == "UNIQUE"
 
-    def columns(self):
+    def columns(self) -> list[str]:
         columns_str = str(self.parse().group(6)).split(",")
 
         return [column.strip() for column in columns_str if column.strip()]
 
-    def where_clause(self):
+    def where_clause(self) -> str:
         return self.parse().group(10)
 
-    def value(self):
+    def value(self) -> str:
         if self.override_value is not None:
             return self.override_value
 
@@ -61,8 +62,11 @@ class IndexSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
-    ):
+        current_schema: StatementSchema | None,
+        previous_schema: StatementSchema | None,
+        database: Database,
+        force: bool = False,
+    ) -> str:
         state_result = ""
 
         if previous_schema is None and current_schema:
@@ -85,10 +89,10 @@ class IndexSchema(StatementSchema):
 
         return state_result
 
-    def destroy_cmd(self):
+    def destroy_cmd(self) -> str:
         return f"DROP INDEX IF EXISTS {self.index_full_name()};"
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = "CREATE "
 
         if self.is_unique():

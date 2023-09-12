@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
 from lib import log
+from sqlite_db import Database
 
 
 # example:
@@ -18,36 +19,39 @@ class DropEntitySchema(StatementSchema):
     REGEX = r"DROP\s+(TABLE|INDEX)?\s*(IF EXISTS)?\s*(\w+\.)?(\w+);"
     TYPE = "drop_entity"
 
-    def id(self):
+    def id(self) -> str:
         return f"drop-{self.entity_type()}-{self.name()}"
 
-    def schema_name(self):
+    def schema_name(self) -> str:
         return self.schema_name_at(3)
 
-    def entity_name(self):
+    def entity_name(self) -> str:
         return self.parse().group(4)
 
-    def entity_full_name(self):
+    def entity_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.entity_name()
         )
 
-    def entity_type(self):
+    def entity_type(self) -> str:
         return self.parse().group(1).upper()
 
-    def name(self):
+    def name(self) -> str:
         return self.entity_full_name()
 
-    def table_name(self):
+    def table_name(self) -> str:
         return self.parse().group(5)
 
-    def is_if_exists(self):
+    def is_if_exists(self) -> bool:
         return str(self.parse().group(2)).upper() == "IF EXISTS"
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
-    ):
+        current_schema: StatementSchema | None,
+        previous_schema: StatementSchema | None,
+        database: Database,
+        force: bool = False,
+    ) -> str:
         state_result = ""
 
         if current_schema:
@@ -58,6 +62,6 @@ class DropEntitySchema(StatementSchema):
 
         return state_result
 
-    def __str__(self):
+    def __str__(self) -> str:
         if_exists_txt = "IF EXISTS" if self.is_if_exists() else ""
         return f"DROP {self.entity_type()} {if_exists_txt} {self.entity_full_name()};"

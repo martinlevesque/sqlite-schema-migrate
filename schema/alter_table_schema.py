@@ -20,21 +20,21 @@ class AlterTableSchema(StatementSchema):
     REGEX = r"ALTER\s+TABLE\s+(\w+\.)?(\w+)\s+.+;"
     TYPE = "alter_table"
 
-    def id(self):
+    def id(self) -> str:
         return self.statement_hash_id()
 
-    def schema_name(self):
+    def schema_name(self) -> str:
         return self.schema_name_at(1)
 
     def table_name(self) -> str:
         return self.parse().group(2)
 
-    def table_full_name(self):
+    def table_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.table_name()
         )
 
-    def name(self):
+    def name(self) -> str:
         return self.table_full_name()
 
     @staticmethod
@@ -43,7 +43,7 @@ class AlterTableSchema(StatementSchema):
         previous_schema: StatementSchema | None,
         database: Database,
         force: bool = False,
-    ):
+    ) -> str:
         state_result = ""
 
         if previous_schema is None and current_schema:
@@ -57,5 +57,5 @@ class AlterTableSchema(StatementSchema):
 
         return state_result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.prepared_input_statement()

@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Optional
 from schema.statement_schema import StatementSchema
 from lib import log
+from sqlite_db import Database
 
 
 # example:
@@ -17,16 +20,16 @@ class PragmaSchema(StatementSchema):
     REGEX = r"PRAGMA\s+(\w+)\s*=\s*(\w+);"
     TYPE = "pragma"
 
-    def id(self):
+    def id(self) -> str:
         return f"pragma-{self.name()}"
 
-    def name(self):
+    def name(self) -> str:
         return self.variable_name()
 
-    def variable_name(self):
+    def variable_name(self) -> str:
         return str(self.parse().group(1)).lower()
 
-    def value(self):
+    def value(self) -> str:
         if self.override_value is not None:
             return self.override_value
 
@@ -36,7 +39,10 @@ class PragmaSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema=None, previous_schema=None, database=None, force=False
+        current_schema: PragmaSchema,
+        previous_schema: PragmaSchema | None,
+        database: Database,
+        force: bool = False,
     ):
         desired_value = current_schema.value()
 

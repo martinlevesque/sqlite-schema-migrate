@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from schema.statement_schema import StatementSchema
 from sqlite_db import Database
@@ -51,8 +53,8 @@ class TableSchema(StatementSchema):
 
     @staticmethod
     def apply_changes(
-        current_schema: StatementSchema,
-        previous_schema: StatementSchema,
+        current_schema: TableSchema,
+        previous_schema: TableSchema,
         database: Database,
         force: bool = False,
     ):

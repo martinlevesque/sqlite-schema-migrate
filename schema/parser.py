@@ -25,7 +25,7 @@ STATEMENT_TYPES = {
 }
 
 
-def parse(str_content):
+def parse(str_content) -> ParsedSchema:
     result = ParsedSchema(
         pragmas={},
         tables={},

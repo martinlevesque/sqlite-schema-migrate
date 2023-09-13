@@ -14,7 +14,7 @@ class ParsedSchema:
     drop_entities: dict
     all: List[StatementSchema]
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = ""
 
         for entity in self.all:

@@ -13,10 +13,10 @@ class Database:
         self.conn = sqlite3.connect(self.filepath)
         log.debug(f"Connected to {self.filepath}")
 
-    def first(self, query):
+    def first(self, query: str):
         return self.conn.execute(query).fetchone()
 
-    def first_column(self, query):
+    def first_column(self, query: str):
         row = self.first(query)
 
         if row is None:
@@ -41,7 +41,7 @@ class Database:
     def commit(self):
         return self.conn.commit()
 
-    def table_exists(self, table_name):
+    def table_exists(self, table_name: str) -> bool:
         return (
             self.first_column(
                 f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
@@ -49,7 +49,7 @@ class Database:
             is not None
         )
 
-    def get_table_column_names(self, table_name):
+    def get_table_column_names(self, table_name: str) -> list[str]:
         result = self.execute(f"PRAGMA table_info({table_name});")
 
         return [r[1] for r in result]
@@ -58,7 +58,7 @@ class Database:
         self.conn.close()
 
     @staticmethod
-    def strip_comments_in_line(sql_line):
+    def strip_comments_in_line(sql_line: str) -> str:
         current_index = 0
         found_at = -1
 
@@ -81,7 +81,7 @@ class Database:
         return sql_line[:found_at] if found_at >= 0 else sql_line
 
     @staticmethod
-    def strip_comments(sql):
+    def strip_comments(sql: str) -> str:
         lines = []
 
         for line in sql.split("\n"):

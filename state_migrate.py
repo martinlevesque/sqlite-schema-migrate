@@ -1,13 +1,14 @@
 import datetime
 from lib import log
 from constants import *
+from sqlite_db import Database
 
 
-def schema_migration_table_exists(database):
+def schema_migration_table_exists(database: Database) -> bool:
     return database.table_exists(TABLE_NAME_SQLITE_SCHEMA_MIGRATE)
 
 
-def ensure_schema_migration_table_exists(database):
+def ensure_schema_migration_table_exists(database: Database) -> dict:
     log.debug(f"Ensuring schema migration table exists")
 
     if not schema_migration_table_exists(database):
@@ -34,7 +35,7 @@ def ensure_schema_migration_table_exists(database):
     }
 
 
-def update_schema_migration_table(database, schema):
+def update_schema_migration_table(database: Database, schema: str):
     log.debug("Updating schema migration table with schema")
 
     first_item = database.first(

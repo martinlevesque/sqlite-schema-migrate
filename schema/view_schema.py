@@ -5,24 +5,17 @@ from lib import log
 from sqlite_db import Database
 
 
-# doc:
-# https://www.sqlite.org/lang_createindex.html
-
-# example:
-# CREATE [UNIQUE] INDEX [IF NOT EXISTS] [schema_name.]index_name ON table_name (column_name [, ...]) [WHERE expr];
-
-
 @dataclass
-class IndexSchema(StatementSchema):
+class ViewSchema(StatementSchema):
     statement: str
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r"CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s)?)+)\)\s*(WHERE\s+(.*))?;"
-    TYPE = "create_index"
+    REGEX = rf"CREATE\s+(TEMP|TEMPORARY)?\s*VIEW\s+(IF NOT EXISTS)?\s*({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
+    TYPE = "create_view"
 
     def id(self) -> str:
-        return f"index-{self.name()}"
+        return f"view-{self.name()}"
 
     def if_not_exists(self) -> str | None:
         return self.parse().group(2)
@@ -30,38 +23,25 @@ class IndexSchema(StatementSchema):
     def schema_name(self) -> str:
         return self.schema_name_at(3)
 
-    def index_name(self) -> str:
-        return self.parse().group(4)
+    def view_name(self) -> str:
+        return self.parse().group(5)
 
-    def index_full_name(self) -> str:
+    def view_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
-            self.schema_name(), self.index_name()
+            self.schema_name(), self.view_name()
         )
 
+    def remaining_statement(self) -> str | None:
+        return self.parse().group(7)
+
     def name(self) -> str:
-        return self.index_full_name()
+        return self.view_full_name()
 
     def table_name(self) -> str:
         return self.parse().group(5)
 
-    def is_unique(self) -> bool:
-        return str(self.parse().group(1)).upper() == "UNIQUE"
-
-    def columns(self) -> list[str]:
-        columns_str = str(self.parse().group(6)).split(",")
-
-        return [column.strip() for column in columns_str if column.strip()]
-
-    def where_clause(self) -> str:
-        return self.parse().group(10)
-
-    def value(self) -> str:
-        if self.override_value is not None:
-            return self.override_value
-
-        self.override_value = self.parse().group(2)
-
-        return self.override_value
+    def is_temp(self) -> bool:
+        return str(self.parse().group(1)).upper() in ["TEMP", "TEMPORARY"]
 
     @staticmethod
     def apply_changes(
@@ -93,24 +73,22 @@ class IndexSchema(StatementSchema):
         return state_result
 
     def destroy_cmd(self) -> str:
-        return f"DROP INDEX IF EXISTS {self.index_full_name()};"
+        return f"DROP VIEW IF EXISTS {self.view_full_name()};"
 
     def __str__(self) -> str:
         result = "CREATE "
 
-        if self.is_unique():
-            result += "UNIQUE "
+        if self.is_temp():
+            result += "TEMP "
 
-        result += "INDEX "
+        result += "VIEW "
 
         if self.if_not_exists():
             result += "IF NOT EXISTS "
 
-        result += self.index_full_name()
+        result += self.view_full_name()
 
-        result += f" ON {self.table_name()} ({', '.join(self.columns())})"
-
-        if self.where_clause():
-            result += f" WHERE {self.where_clause()}"
+        if self.remaining_statement():
+            result += str(self.remaining_statement())
 
         return f"{result};"

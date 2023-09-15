@@ -33,11 +33,11 @@ def test_create_table_name_with_special_characters():
 
 def test_create_table_str_happy_path():
     schema = TableSchema(
-        statement="CREATE TABLE hello ...;",
+        statement="CREATE TABLE hello.world ...;",
         base_instruction="CREATE TABLE",
     )
 
-    assert str(schema) == "CREATE TABLE hello ...;"
+    assert str(schema) == "CREATE TABLE hello.world ...;"
 
 
 def test_create_table_str_with_override():

@@ -118,7 +118,7 @@ class TableSchema(StatementSchema):
                     ),
                     log_function=log.info,
                 )
-                #database.execute("COMMIT;", log_function=log.info)
+                # database.execute("COMMIT;", log_function=log.info)
             else:
                 log.debug(f"skipping changes in table {current_schema.name()}")
 

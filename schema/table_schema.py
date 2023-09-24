@@ -80,7 +80,7 @@ class TableSchema(StatementSchema):
                 # ensure foreign keys are off
                 database.execute(f"PRAGMA foreign_keys = OFF;")
 
-                database.execute("BEGIN TRANSACTION;", log_function=log.info)
+                # database.execute("BEGIN TRANSACTION;", log_function=log.info)
 
                 origin_table_name = f"{current_schema.table_name()}_old"
 
@@ -118,7 +118,7 @@ class TableSchema(StatementSchema):
                     ),
                     log_function=log.info,
                 )
-                database.execute("COMMIT;", log_function=log.info)
+                #database.execute("COMMIT;", log_function=log.info)
             else:
                 log.debug(f"skipping changes in table {current_schema.name()}")
 

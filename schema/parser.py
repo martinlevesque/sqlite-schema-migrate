@@ -7,6 +7,7 @@ from schema.index_schema import IndexSchema
 from schema.drop_entity_schema import DropEntitySchema
 from schema.table_schema import TableSchema
 from schema.alter_table_schema import AlterTableSchema
+from schema.view_schema import ViewSchema
 
 # read an input sql schema content and provide a hash representing the schema
 
@@ -22,6 +23,9 @@ STATEMENT_TYPES = {
     "REPLACE": {"name": "insert", "class": DataMutationSchema},
     "UPDATE": {"name": "update", "class": DataMutationSchema},
     "DELETE FROM": {"name": "update", "class": DataMutationSchema},
+    "CREATE VIEW": {"name": "update", "class": ViewSchema},
+    "CREATE TEMP VIEW": {"name": "update", "class": ViewSchema},
+    "CREATE TEMPORARY VIEW": {"name": "update", "class": ViewSchema},
 }
 
 
@@ -33,11 +37,12 @@ def parse(str_content) -> ParsedSchema:
         data_mutations={},
         indexes={},
         drop_entities={},
+        views={},
         all=[],
     )
 
     pattern = re.compile(
-        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|UPDATE|DELETE FROM).*?;)\s*(--[^\n]*)?\n""",
+        r"""(?i)((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|CREATE VIEW|CREATE TEMP VIEW|CREATE TEMPORARY VIEW|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|UPDATE|DELETE FROM).*?;)\s*(--[^\n]*)?\n""",
         re.DOTALL | re.MULTILINE,
     )
 
@@ -65,6 +70,8 @@ def parse(str_content) -> ParsedSchema:
                 result.tables[schema_item.name()] = schema_item
             elif schema_item.TYPE == "alter_table":
                 result.alter_tables[schema_item.name()] = schema_item
+            elif schema_item.TYPE == "create_view":
+                result.views[schema_item.name()] = schema_item
             elif schema_item.TYPE == "data_mutation":
                 result.data_mutations[schema_item.name()] = schema_item
             else:

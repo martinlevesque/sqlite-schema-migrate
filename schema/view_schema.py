@@ -17,6 +17,12 @@ class ViewSchema(StatementSchema):
     def id(self) -> str:
         return f"view-{self.name()}"
 
+    def prepared_input_statement(self):
+        # strip newlines
+        statement_stripped_comments = Database.strip_comments(self.statement)
+
+        return statement_stripped_comments.replace("\n", " ")
+
     def if_not_exists(self) -> str | None:
         return self.parse().group(2)
 

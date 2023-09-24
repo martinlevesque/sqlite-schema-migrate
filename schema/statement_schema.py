@@ -53,7 +53,7 @@ class StatementSchema:
         return str(schema_txt).strip()
 
     def destroy_cmd(self) -> str:
-        pass
+        return ""
 
     @staticmethod
     def schema_entity_full_name(schema_name: str, entity_name: str) -> str:

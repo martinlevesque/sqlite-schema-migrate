@@ -7,4 +7,7 @@ lib/python3.11
 
 **/**/__pycache__/
 *.db
+TODO.txt
 prepare.sh
+
+samples/

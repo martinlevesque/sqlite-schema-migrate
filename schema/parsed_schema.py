@@ -12,6 +12,7 @@ class ParsedSchema:
     data_mutations: dict
     indexes: dict
     drop_entities: dict
+    views: dict
     all: List[StatementSchema]
 
     def __str__(self) -> str:

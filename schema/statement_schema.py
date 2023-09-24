@@ -15,6 +15,7 @@ class StatementSchema:
 
     REGEX_TERM_NAME = "(\\w|\\s|\\[|\\])+"
     REGEX = ""
+    TYPE = ""
 
     def id(self) -> str:
         return self.name()

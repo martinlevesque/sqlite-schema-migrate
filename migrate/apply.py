@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from schema.parsed_schema import ParsedSchema
 from sqlite_db import Database
+from lib import log
 
 
 # given the local schema, and remote schema, apply the diffs from the local schema to the remote schema
@@ -16,6 +17,7 @@ def apply(
     force: bool,
 ):
     applied_schema = deepcopy(local_parsed_schema.all)
+    initiated_transaction = False
 
     for previous_item in previous_parsed_schema.all:
         if not any(
@@ -33,6 +35,10 @@ def apply(
             [x for x in previous_parsed_schema.all if x.id() == item.id()]
         )
 
+        if item.TYPE != "pragma" and not initiated_transaction:
+            database.execute("BEGIN TRANSACTION;", log_function=log.info)
+            initiated_transaction = True
+
         any_schema = current or previous
 
         if any_schema is None:
@@ -47,6 +53,8 @@ def apply(
 
         if state_result == "remove":
             deleted_ids.append(any_schema.id())
+
+    database.execute("COMMIT;", log_function=log.info)
 
     return [schema for schema in applied_schema if schema.id() not in deleted_ids]
 

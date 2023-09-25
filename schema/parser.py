@@ -33,7 +33,7 @@ STATEMENT_TYPES = {
 }
 
 
-def parse(str_content) -> ParsedSchema:
+def parse(str_content: str) -> ParsedSchema:
     result = ParsedSchema(
         pragmas={},
         tables={},
@@ -68,6 +68,8 @@ def parse(str_content) -> ParsedSchema:
                 statement=statement, base_instruction=base_instruction
             )
 
+            print(f"adding type {schema_item.TYPE}")
+
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_index":
@@ -81,6 +83,7 @@ def parse(str_content) -> ParsedSchema:
             elif schema_item.TYPE == "create_view":
                 result.views[schema_item.name()] = schema_item
             elif schema_item.TYPE == "create_trigger":
+                print(f"adding trigger ")
                 result.triggers[schema_item.name()] = schema_item
             elif schema_item.TYPE == "data_mutation":
                 result.data_mutations[schema_item.name()] = schema_item

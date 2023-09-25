@@ -27,5 +27,8 @@ DROP INDEX IF EXISTS myindex_test;
 CREATE INDEX myindex_test ON categories (name);
 
 
-
+CREATE TRIGGER categories_on_insert AFTER INSERT ON categories
+ BEGIN
+  UPDATE categories SET last_update = DATETIME('NOW')  WHERE rowid = new.rowid;
+ END;
 

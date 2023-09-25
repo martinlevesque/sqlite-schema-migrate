@@ -27,17 +27,17 @@ class TriggerSchema(StatementSchema):
         return self.parse().group(2)
 
     def schema_name(self) -> str:
-        return self.schema_name_at(3)
+        return self.schema_name_at(5)
 
-    def view_name(self) -> str:
-        return self.parse().group(5)
+    def trigger_name(self) -> str:
+        return self.parse().group(6)
 
     def remaining_statement(self) -> str | None:
-        return self.parse().group(7)
+        return self.parse().group(9)
 
     def name(self) -> str:
         return StatementSchema.schema_entity_full_name(
-            self.schema_name(), self.view_name()
+            self.schema_name(), self.trigger_name()
         )
 
     def table_name(self) -> str:
@@ -92,6 +92,6 @@ class TriggerSchema(StatementSchema):
         result += self.name()
 
         if self.remaining_statement():
-            result += str(self.remaining_statement())
+            result += " " + str(self.remaining_statement())
 
         return f"{result};"

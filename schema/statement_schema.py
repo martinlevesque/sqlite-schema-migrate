@@ -13,7 +13,7 @@ class StatementSchema:
     statement: str
     base_instruction: str
 
-    REGEX_TERM_NAME = "(\\w|\\s|\\[|\\])+"
+    REGEX_TERM_NAME = "(\\[(\\w|\\s)+\\])|(\\w+)"
     REGEX = ""
     TYPE = ""
 

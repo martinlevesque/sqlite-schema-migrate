@@ -17,3 +17,12 @@ def test_create_trigger_str_happy_path():
     )
 
     assert str(schema) == "CREATE TRIGGER hello.world ...;"
+
+
+def test_create_trigger_name():
+    schema = TriggerSchema(
+        statement="CREATE TRIGGER hello.world AFTER INSERT test;",
+        base_instruction="CREATE TRIGGER",
+    )
+
+    assert schema.name() == "hello.world"

@@ -46,7 +46,7 @@ class TableSchema(StatementSchema):
         )
 
     def specs_following_table(self):
-        return self.parse().group(5)
+        return self.parse().group(10)
 
     def name(self):
         return self.table_full_name()

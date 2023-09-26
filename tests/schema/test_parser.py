@@ -2,7 +2,7 @@ from schema import parser
 
 
 def test_parser_create_trigger():
-  content = """
+    content = """
   CREATE TRIGGER categories_on_insert AFTER INSERT ON categories
    BEGIN
     UPDATE categories SET last_update = DATETIME('NOW')  WHERE rowid = new.rowid;
@@ -10,7 +10,14 @@ def test_parser_create_trigger():
 
   """
 
-  result = parser.parse(content)
+    result = parser.parse(content)
 
-  assert "categories_on_insert" in result.triggers
+    assert "categories_on_insert" in result.triggers
 
+    expected_statement = (
+        "CREATE TRIGGER categories_on_insert AFTER INSERT ON "
+        "categories    BEGIN     UPDATE categories SET last_update = DATETIME('NOW')"
+        "  WHERE rowid = new.rowid;    END;"
+    )
+
+    assert str(result.triggers["categories_on_insert"]) == expected_statement

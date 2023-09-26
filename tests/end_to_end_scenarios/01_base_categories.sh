@@ -10,3 +10,8 @@ sqlite3 -line test.db 'select name from categories where name = "category-test-2
 sqlite3 -line test.db 'select name from categories where id = 3' | grep "category-test-4" | wc -l | grep "1"
 
 sqlite3 -line test.db 'select name from categories where id = 4' | grep "category-test-5" | wc -l | grep "0"
+
+# check that the trigger worked
+current_year=`date +%Y`
+sqlite3 -line test.db 'select last_update from categories where id = 3' | grep "$current_year"
+

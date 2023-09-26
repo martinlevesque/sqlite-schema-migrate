@@ -30,7 +30,7 @@ class ViewSchema(StatementSchema):
         return self.schema_name_at(3)
 
     def view_name(self) -> str:
-        return self.parse().group(5)
+        return self.parse().group(7)
 
     def view_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
@@ -38,13 +38,10 @@ class ViewSchema(StatementSchema):
         )
 
     def remaining_statement(self) -> str | None:
-        return self.parse().group(7)
+        return self.parse().group(11)
 
     def name(self) -> str:
         return self.view_full_name()
-
-    def table_name(self) -> str:
-        return self.parse().group(5)
 
     def is_temp(self) -> bool:
         return str(self.parse().group(1)).upper() in ["TEMP", "TEMPORARY"]
@@ -95,6 +92,6 @@ class ViewSchema(StatementSchema):
         result += self.view_full_name()
 
         if self.remaining_statement():
-            result += str(self.remaining_statement())
+            result += " " + str(self.remaining_statement())
 
         return f"{result};"

@@ -27,13 +27,13 @@ class TriggerSchema(StatementSchema):
         return self.parse().group(2)
 
     def schema_name(self) -> str:
-        return self.schema_name_at(5)
+        return self.schema_name_at(3)
 
     def trigger_name(self) -> str:
-        return self.parse().group(6)
+        return self.parse().group(7)
 
     def remaining_statement(self) -> str | None:
-        return self.parse().group(9)
+        return self.parse().group(11)
 
     def name(self) -> str:
         return StatementSchema.schema_entity_full_name(

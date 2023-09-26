@@ -14,6 +14,12 @@ CREATE TABLE categories (
 	FOREIGN KEY(parent_category_id) REFERENCES categories(id),
 	UNIQUE (name)
 );
+
+CREATE TRIGGER categories_on_insert AFTER INSERT ON categories
+ BEGIN
+  UPDATE categories SET last_update = DATETIME('NOW')  WHERE rowid = new.rowid;
+ END;
+
 INSERT INTO categories (id, name) VALUES (1, 'category-test-1');
 INSERT INTO categories (id, name) VALUES (2, 'category-test-2');
 INSERT INTO categories (id, name) VALUES (3, 'category-test-3');
@@ -27,8 +33,4 @@ DROP INDEX IF EXISTS myindex_test;
 CREATE INDEX myindex_test ON categories (name);
 
 
-CREATE TRIGGER categories_on_insert AFTER INSERT ON categories
- BEGIN
-  UPDATE categories SET last_update = DATETIME('NOW')  WHERE rowid = new.rowid;
- END;
 

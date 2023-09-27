@@ -47,10 +47,10 @@ def parse(str_content: str) -> ParsedSchema:
     )
 
     pattern = re.compile(
-        r"""(?i)(((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|CREATE VIEW|"""
+        r"""(((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|CREATE VIEW|"""
         r"""CREATE TEMP VIEW|CREATE TEMPORARY VIEW|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|"""
-        r"""UPDATE|DELETE FROM)|((CREATE TRIGGER|CREATE TEMP TRIGGER|CREATE TEMPORARY TRIGGER).+BEGIN\s+.+END\s*)).*?;)\s*(--[^\n]*)?\n""",
-        re.DOTALL | re.MULTILINE,
+        r"""UPDATE|DELETE FROM)|((CREATE TRIGGER|CREATE TEMP TRIGGER|CREATE TEMPORARY TRIGGER).+?BEGIN.+?END\s*)).*?;)\s*(--[^\n]*)?\n""",
+        re.DOTALL | re.IGNORECASE | re.MULTILINE,
     )
 
     for match in pattern.finditer(f"{str_content}\n"):
@@ -67,8 +67,6 @@ def parse(str_content: str) -> ParsedSchema:
             schema_item = statement_setup["class"](
                 statement=statement, base_instruction=base_instruction
             )
-
-            print(f"adding type {schema_item.TYPE}")
 
             if schema_item.TYPE == "pragma":
                 result.pragmas[schema_item.name()] = schema_item
@@ -92,5 +90,6 @@ def parse(str_content: str) -> ParsedSchema:
 
             # append to all as an ordered list
             result.all.append(schema_item)
+    print("done parser.")
 
     return result

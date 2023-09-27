@@ -26,9 +26,11 @@ def main():
     if not parsed_args.init_db_schema:
         previous_schema = schema_parser.parse(latest_schema_info.get("schema", {}))
 
+        print(f"about to apply...")
         all_schema = migrate_apply.apply(
             desired_schema, previous_schema, db, parsed_args.force
         )
+        print("done applying.")
     else:
         all_schema = desired_schema.all
 

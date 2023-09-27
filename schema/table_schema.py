@@ -59,10 +59,13 @@ class TableSchema(StatementSchema):
         force: bool = False,
     ):
         state_result = ""
+        print(f"in apply change table.. ")
 
         if previous_schema is None:
             # does not exist, create it
+            print(f"about to create ...")
             database.execute(str(current_schema), log_function=log.info)
+            print(f"done create ...")
         elif current_schema is None and previous_schema:
             # it was removed:
             database.execute(previous_schema.destroy_cmd(), log_function=log.info)

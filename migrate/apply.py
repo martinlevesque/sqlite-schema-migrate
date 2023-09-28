@@ -28,7 +28,6 @@ def apply(
     deleted_ids = []
 
     for item in applied_schema:
-        print(f"for item = {item}")
         current = first_item(
             [x for x in local_parsed_schema.all if x.id() == item.id()]
         )
@@ -45,14 +44,12 @@ def apply(
         if any_schema is None:
             continue
 
-        print(f"applying change {any_schema.id()}")
         state_result = any_schema.apply_changes(
             current,
             previous,
             database,
             force,
         )
-        print(f"done applying change {any_schema.id()}")
 
         if state_result == "remove":
             deleted_ids.append(any_schema.id())

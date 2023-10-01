@@ -36,8 +36,8 @@ class DataMutationSchema(StatementSchema):
     ) -> str:
         state_result = ""
 
-        if current_schema:
-            # it is new:
+        if previous_schema is None and current_schema:
+            # has not been run yet
             database.execute(str(current_schema), log_function=log.info)
         elif current_schema is None and previous_schema:
             state_result = "remove"

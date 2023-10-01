@@ -46,6 +46,13 @@ def parse(str_content: str) -> ParsedSchema:
         all=[],
     )
 
+    stripped_str_content = ""
+
+    if str_content:
+        stripped_str_content = strip_single_line_comments(
+            strip_multiline_comments(str_content)
+        )
+
     pattern = re.compile(
         r"""(((CREATE TABLE|ALTER TABLE|CREATE INDEX|CREATE UNIQUE INDEX|CREATE VIEW|"""
         r"""CREATE TEMP VIEW|CREATE TEMPORARY VIEW|DROP INDEX|PRAGMA|WITH|INSERT|REPLACE|"""
@@ -53,7 +60,7 @@ def parse(str_content: str) -> ParsedSchema:
         re.DOTALL | re.IGNORECASE | re.MULTILINE,
     )
 
-    for match in pattern.finditer(f"{str_content}\n"):
+    for match in pattern.finditer(f"{stripped_str_content}\n"):
         statement = match.group(1)
         base_instruction = (match.group(5) or match.group(2)).upper()
 

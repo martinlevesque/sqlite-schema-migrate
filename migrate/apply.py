@@ -54,7 +54,8 @@ def apply(
         if state_result == "remove":
             deleted_ids.append(any_schema.id())
 
-    database.execute("COMMIT;", log_function=log.info)
+    if initiated_transaction:
+        database.execute("COMMIT;", log_function=log.info)
 
     return [schema for schema in applied_schema if schema.id() not in deleted_ids]
 

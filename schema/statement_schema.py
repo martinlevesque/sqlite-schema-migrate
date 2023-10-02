@@ -79,3 +79,13 @@ class StatementSchema:
             raise Exception(f"Invalid statement: {self.statement}")
 
         return match
+
+    def parsed_variable(self, variable: str) -> str | None:
+        match = self.parse()
+
+        groupdict = match.groupdict()
+
+        if not groupdict:
+            raise Exception(f"Invalid statement: {self.statement}")
+
+        return groupdict.get(variable)

@@ -16,34 +16,20 @@ class DropEntitySchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r"DROP\s+(TABLE|INDEX)?\s*(IF EXISTS)?\s*(\w+\.)?(\w+);"
+    REGEX = r"DROP\s+(?P<entity_type>TABLE|INDEX)?\s*(?P<if_exists>IF\s+EXISTS)?\s*(?P<schema_name>\w+\.)?(?P<entity_name>\w+);"
     TYPE = "drop_entity"
 
     def id(self) -> str:
         return f"drop-{self.entity_type()}-{self.name()}"
 
-    def schema_name(self) -> str:
-        return self.schema_name_at(3)
-
-    def entity_name(self) -> str:
-        return self.parse().group(4)
-
-    def entity_full_name(self) -> str:
-        return StatementSchema.schema_entity_full_name(
-            self.schema_name(), self.entity_name()
-        )
-
     def entity_type(self) -> str:
-        return self.parse().group(1).upper()
+        return self.parsed_variable("entity_type")
 
     def name(self) -> str:
         return self.entity_full_name()
 
-    def table_name(self) -> str:
-        return self.parse().group(5)
-
     def is_if_exists(self) -> bool:
-        return str(self.parse().group(2)).upper() == "IF EXISTS"
+        return str(self.parsed_variable("if_exists")).upper() == "IF EXISTS"
 
     @staticmethod
     def apply_changes(

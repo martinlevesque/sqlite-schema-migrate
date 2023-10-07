@@ -11,8 +11,6 @@ from lib import log
 def main():
     db = sqlite_db.Database(filepath=parsed_args.database)
 
-    # db.execute("BEGIN TRANSACTION;", log_function=log.info)
-
     latest_schema_info = state_migrate.ensure_schema_migration_table_exists(db)
 
     if parsed_args.schema:
@@ -37,8 +35,6 @@ def main():
 
     # insert the schema into the database
     state_migrate.update_schema_migration_table(db, str(resulting_schema))
-
-    # db.execute("COMMIT;", log_function=log.info)
 
 
 if __name__ == "__main__":

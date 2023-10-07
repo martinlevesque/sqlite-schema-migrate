@@ -17,22 +17,11 @@ class AlterTableSchema(StatementSchema):
     statement: str
     base_instruction: str
 
-    REGEX = r"ALTER\s+TABLE\s+(\w+\.)?(?P<table_name>\w+)\s+.+;"
+    REGEX = r"ALTER\s+TABLE\s+(?P<schema_name>\w+\.)?(?P<table_name>\w+)\s+.+;"
     TYPE = "alter_table"
 
     def id(self) -> str:
         return self.statement_hash_id()
-
-    def schema_name(self) -> str:
-        return self.schema_name_at(1)
-
-    def table_name(self) -> str:
-        return str(self.parsed_variable("table_name"))
-
-    def table_full_name(self) -> str:
-        return StatementSchema.schema_entity_full_name(
-            self.schema_name(), self.table_name()
-        )
 
     def name(self) -> str:
         return self.table_full_name()

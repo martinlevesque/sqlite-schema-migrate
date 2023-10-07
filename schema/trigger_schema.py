@@ -11,7 +11,7 @@ class TriggerSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = rf"CREATE\s+(TEMP|TEMPORARY)?\s*TRIGGER\s+(IF NOT EXISTS)?\s*({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
+    REGEX = rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*TRIGGER\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>{StatementSchema.REGEX_TERM_NAME}\.)?(?P<trigger_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
     TYPE = "create_trigger"
 
     def id(self) -> str:
@@ -23,28 +23,13 @@ class TriggerSchema(StatementSchema):
 
         return statement_stripped_comments.replace("\n", " ")
 
-    def if_not_exists(self) -> str | None:
-        return self.parse().group(2)
-
-    def schema_name(self) -> str:
-        return self.schema_name_at(3)
-
     def trigger_name(self) -> str:
-        return self.parse().group(7)
-
-    def remaining_statement(self) -> str | None:
-        return self.parse().group(11)
+        return self.parsed_variable("trigger_name")
 
     def name(self) -> str:
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.trigger_name()
         )
-
-    def table_name(self) -> str:
-        return self.parse().group(5)
-
-    def is_temp(self) -> bool:
-        return str(self.parse().group(1)).upper() in ["TEMP", "TEMPORARY"]
 
     @staticmethod
     def apply_changes(
@@ -91,7 +76,7 @@ class TriggerSchema(StatementSchema):
 
         result += self.name()
 
-        if self.remaining_statement():
-            result += " " + str(self.remaining_statement())
+        if self.remaining():
+            result += " " + str(self.remaining())
 
         return f"{result};"

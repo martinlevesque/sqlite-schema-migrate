@@ -41,8 +41,13 @@ class StatementSchema:
     ):
         pass
 
-    def schema_name_at(self, expected_index: int) -> str:
-        schema_txt = self.parse().group(expected_index)
+    def schema_name_at(self, expected_index: int | str) -> str:
+        schema_test = ""
+
+        if isinstance(expected_index, int):
+            schema_txt = self.parse().group(expected_index)
+        elif isinstance(expected_index, str):
+            schema_txt = self.parsed_variable(expected_index)
 
         if not schema_txt:
             return ""
@@ -52,6 +57,37 @@ class StatementSchema:
             schema_txt = schema_txt[:-1]
 
         return str(schema_txt).strip()
+
+    def table_full_name(self) -> str:
+        return StatementSchema.schema_entity_full_name(
+            self.schema_name(), self.table_name()
+        )
+
+    def entity_full_name(self) -> str:
+        return StatementSchema.schema_entity_full_name(
+            self.schema_name(), self.entity_name()
+        )
+
+    def schema_name(self) -> str:
+        return self.schema_name_at("schema_name")
+
+    def entity_name(self) -> str:
+        return self.parsed_variable("entity_name")
+
+    def table_name(self) -> str:
+        return self.parsed_variable("table_name")
+
+    def if_not_exists(self) -> str:
+        return self.parsed_variable("if_not_exists")
+
+    def remaining(self) -> str:
+        return self.parsed_variable("remaining")
+
+    def temp(self) -> str:
+        return self.parsed_variable("temp")
+
+    def is_temp(self) -> bool:
+        return str(self.temp()).upper() in ["TEMP", "TEMPORARY"]
 
     def destroy_cmd(self) -> str:
         return ""
@@ -80,7 +116,7 @@ class StatementSchema:
 
         return match
 
-    def parsed_variable(self, variable: str) -> str | None:
+    def parsed_variable(self, variable: str) -> str:
         match = self.parse()
 
         groupdict = match.groupdict()
@@ -88,4 +124,9 @@ class StatementSchema:
         if not groupdict:
             raise Exception(f"Invalid statement: {self.statement}")
 
-        return groupdict.get(variable)
+        result = groupdict.get(variable)
+
+        if not result:
+            return ""
+
+        return result

@@ -19,7 +19,7 @@ class TableSchema(StatementSchema):
     base_instruction: str
     override_table_name: str = ""
 
-    REGEX = rf"CREATE\s+TABLE\s+(({StatementSchema.REGEX_TERM_NAME})\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
+    REGEX = rf"CREATE\s+TABLE\s+(?P<schema_name>({StatementSchema.REGEX_TERM_NAME})\.)?(?P<table_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
     TYPE = "create_table"
 
     def id(self):
@@ -31,22 +31,16 @@ class TableSchema(StatementSchema):
 
         return statement_stripped_comments.replace("\n", " ")
 
-    def schema_name(self):
-        return self.schema_name_at(1)
-
     def table_name(self):
         if self.override_table_name:
             return self.override_table_name
 
-        return str(self.parse().group(6)).strip()
+        return str(self.parsed_variable("table_name")).strip()
 
     def table_full_name(self):
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.table_name()
         )
-
-    def specs_following_table(self):
-        return self.parse().group(10)
 
     def name(self):
         return self.table_full_name()
@@ -132,4 +126,4 @@ class TableSchema(StatementSchema):
         return f"DROP TABLE IF EXISTS {self.table_full_name()};"
 
     def __str__(self):
-        return f"CREATE TABLE {self.table_full_name()} {self.specs_following_table()};"
+        return f"CREATE TABLE {self.table_full_name()} {self.remaining()};"

@@ -18,20 +18,14 @@ class IndexSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r"CREATE\s+(UNIQUE)?\s*INDEX\s+(IF NOT EXISTS)?\s*(\w+\.)?(\w+)\s+ON\s+(\w+)\s*\(((\w+(,\s?)?)+)\)\s*(WHERE\s+(.*))?;"
+    REGEX = r"CREATE\s+(?P<unique>UNIQUE)?\s*INDEX\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>\w+\.)?(?P<index_name>\w+)\s+ON\s+(?P<table_name>\w+)\s*\((?P<columns>(\w+(,\s?)?)+)\)\s*(WHERE\s+(?P<where_clause>.*))?;"
     TYPE = "create_index"
 
     def id(self) -> str:
         return f"index-{self.name()}"
 
-    def if_not_exists(self) -> str | None:
-        return self.parse().group(2)
-
-    def schema_name(self) -> str:
-        return self.schema_name_at(3)
-
     def index_name(self) -> str:
-        return self.parse().group(4)
+        return self.parsed_variable("index_name")
 
     def index_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
@@ -41,25 +35,22 @@ class IndexSchema(StatementSchema):
     def name(self) -> str:
         return self.index_full_name()
 
-    def table_name(self) -> str:
-        return self.parse().group(5)
-
     def is_unique(self) -> bool:
-        return str(self.parse().group(1)).upper() == "UNIQUE"
+        return str(self.parsed_variable("unique")).upper() == "UNIQUE"
 
     def columns(self) -> list[str]:
-        columns_str = str(self.parse().group(6)).split(",")
+        columns_str = str(self.parsed_variable("columns")).split(",")
 
         return [column.strip() for column in columns_str if column.strip()]
 
     def where_clause(self) -> str:
-        return self.parse().group(10)
+        return self.parsed_variable("where_clause")
 
     def value(self) -> str:
         if self.override_value is not None:
             return self.override_value
 
-        self.override_value = self.parse().group(2)
+        self.override_value = self.if_not_exists()
 
         return self.override_value
 

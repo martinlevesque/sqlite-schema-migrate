@@ -11,7 +11,7 @@ class ViewSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = rf"CREATE\s+(TEMP|TEMPORARY)?\s*VIEW\s+(IF NOT EXISTS)?\s*({StatementSchema.REGEX_TERM_NAME}\.)?({StatementSchema.REGEX_TERM_NAME})\s*(.+);"
+    REGEX = rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*VIEW\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>{StatementSchema.REGEX_TERM_NAME}\.)?(?P<view_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
     TYPE = "create_view"
 
     def id(self) -> str:
@@ -23,28 +23,16 @@ class ViewSchema(StatementSchema):
 
         return statement_stripped_comments.replace("\n", " ")
 
-    def if_not_exists(self) -> str | None:
-        return self.parse().group(2)
-
-    def schema_name(self) -> str:
-        return self.schema_name_at(3)
-
     def view_name(self) -> str:
-        return self.parse().group(7)
+        return self.parsed_variable("view_name")
 
     def view_full_name(self) -> str:
         return StatementSchema.schema_entity_full_name(
             self.schema_name(), self.view_name()
         )
 
-    def remaining_statement(self) -> str | None:
-        return self.parse().group(11)
-
     def name(self) -> str:
         return self.view_full_name()
-
-    def is_temp(self) -> bool:
-        return str(self.parse().group(1)).upper() in ["TEMP", "TEMPORARY"]
 
     @staticmethod
     def apply_changes(
@@ -91,7 +79,7 @@ class ViewSchema(StatementSchema):
 
         result += self.view_full_name()
 
-        if self.remaining_statement():
-            result += " " + str(self.remaining_statement())
+        if self.remaining():
+            result += " " + str(self.remaining())
 
         return f"{result};"

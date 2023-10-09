@@ -84,7 +84,7 @@ $ python __main__.py -s schema.sql --force database.db
 The output of this command will be the following:
 
 ```
-DEBUG: Connected to test.db
+DEBUG: Connected to database.db
 DEBUG: Ensuring schema migration table exists
 DEBUG: Schema migration table already exists... skipping
 INFO: Executing: BEGIN TRANSACTION;

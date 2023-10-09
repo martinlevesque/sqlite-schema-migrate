@@ -1,6 +1,31 @@
 from schema import parser
 
 
+def test_parser_happy_path():
+    content = """
+  
+CREATE TABLE categories (
+    id INTEGER NOT NULL,
+    name VARCHAR(200) NOT NULL default(';'),
+    parent_category_id INTEGER NULL,
+    last_update TIMESTAMP NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY(parent_category_id) REFERENCES categories(id),
+    UNIQUE (name)
+);
+
+
+  """
+
+    result = parser.parse(content)
+
+    assert len(result.tables) == 1
+    assert (
+        str(result.tables["categories"])
+        == "CREATE TABLE categories (     id INTEGER NOT NULL,     name VARCHAR(200) NOT NULL default(';'),     parent_category_id INTEGER NULL,     last_update TIMESTAMP NULL,     PRIMARY KEY (id),     FOREIGN KEY(parent_category_id) REFERENCES categories(id),     UNIQUE (name) );"
+    )
+
+
 def test_parser_create_trigger():
     content = """
   CREATE TRIGGER categories_on_insert AFTER INSERT ON categories

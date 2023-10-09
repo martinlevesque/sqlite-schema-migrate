@@ -13,7 +13,10 @@ class StatementSchema:
     statement: str
     base_instruction: str
 
+    REGEX_IF_NOT_EXISTS = r"(?P<if_not_exists>IF NOT EXISTS)"
     REGEX_TERM_NAME = "(\\[(\\w|\\s)+\\])|(\\w+)"
+    REGEX_SCHEMA_NAME = rf"(?P<schema_name>({REGEX_TERM_NAME})\.)"
+    REGEX_TABLE_NAME = rf"(?P<table_name>({REGEX_TERM_NAME}))"
     REGEX = ""
     TYPE = ""
 

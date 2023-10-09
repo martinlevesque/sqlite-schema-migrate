@@ -19,7 +19,7 @@ class TableSchema(StatementSchema):
     base_instruction: str
     override_table_name: str = ""
 
-    REGEX = rf"CREATE\s+TABLE\s+(?P<schema_name>({StatementSchema.REGEX_TERM_NAME})\.)?(?P<table_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
+    REGEX = rf"CREATE\s+TABLE\s+{StatementSchema.REGEX_SCHEMA_NAME}?{StatementSchema.REGEX_TABLE_NAME}\s*(?P<remaining>.+);"
     TYPE = "create_table"
 
     def id(self):

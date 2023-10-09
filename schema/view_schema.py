@@ -11,7 +11,10 @@ class ViewSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*VIEW\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>{StatementSchema.REGEX_TERM_NAME}\.)?(?P<view_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
+    REGEX = (
+        rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*VIEW\s+{StatementSchema.REGEX_IF_NOT_EXISTS}?"
+        rf"\s*{StatementSchema.REGEX_SCHEMA_NAME}?(?P<view_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
+    )
     TYPE = "create_view"
 
     def id(self) -> str:

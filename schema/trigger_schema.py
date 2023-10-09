@@ -11,7 +11,11 @@ class TriggerSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*TRIGGER\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>{StatementSchema.REGEX_TERM_NAME}\.)?(?P<trigger_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
+    REGEX = (
+        rf"CREATE\s+(?P<temp>TEMP|TEMPORARY)?\s*TRIGGER\s+"
+        rf"{StatementSchema.REGEX_IF_NOT_EXISTS}?\s*{StatementSchema.REGEX_SCHEMA_NAME}?"
+        rf"(?P<trigger_name>{StatementSchema.REGEX_TERM_NAME})\s*(?P<remaining>.+);"
+    )
     TYPE = "create_trigger"
 
     def id(self) -> str:

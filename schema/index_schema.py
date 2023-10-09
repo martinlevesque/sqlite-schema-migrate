@@ -18,7 +18,11 @@ class IndexSchema(StatementSchema):
     base_instruction: str
     override_value: Optional[str] = None
 
-    REGEX = r"CREATE\s+(?P<unique>UNIQUE)?\s*INDEX\s+(?P<if_not_exists>IF NOT EXISTS)?\s*(?P<schema_name>\w+\.)?(?P<index_name>\w+)\s+ON\s+(?P<table_name>\w+)\s*\((?P<columns>(\w+(,\s?)?)+)\)\s*(WHERE\s+(?P<where_clause>.*))?;"
+    REGEX = (
+        rf"CREATE\s+(?P<unique>UNIQUE)?\s*INDEX\s+{StatementSchema.REGEX_IF_NOT_EXISTS}"
+        rf"?\s*{StatementSchema.REGEX_SCHEMA_NAME}?(?P<index_name>\w+)"
+        rf"\s+ON\s+(?P<table_name>\w+)\s*\((?P<columns>(\w+(,\s?)?)+)\)\s*(WHERE\s+(?P<where_clause>.*))?;"
+    )
     TYPE = "create_index"
 
     def id(self) -> str:

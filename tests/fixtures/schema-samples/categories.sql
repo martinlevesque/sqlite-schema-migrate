@@ -10,6 +10,7 @@ CREATE TABLE categories (
 	name VARCHAR(200) NOT NULL default(';'),
 	parent_category_id INTEGER NULL,
 	last_update TIMESTAMP NULL,
+	new_column INTEGER NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY(parent_category_id) REFERENCES categories(id),
 	UNIQUE (name)
